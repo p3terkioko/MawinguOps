@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>USSD Simulator - MawinguOps</title>
+    <meta name="description" content="Test the MawinguOps USSD service with our interactive simulator">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="ussd-body">
+    <!-- Header -->
+    <header class="ussd-header">
+        <div class="container">
+            <nav class="header-nav">
+                <a href="/" class="back-link">← Back to Home</a>
+                <div class="header-status">
+                    <span class="status-indicator">🟢 Online</span>
+                </div>
+            </nav>
+            <h1 class="ussd-title">USSD Simulator</h1>
+            <p class="ussd-subtitle">Test MawinguOps farming advisory service</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="ussd-main">
+        <div class="container">
+            
+            <!-- Instructions Panel -->
+            <div class="instructions-panel">
+                <h2 class="instructions-title">How to Use the USSD Simulator</h2>
+                <div class="instructions-content">
+                    <div class="instruction-step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Enter Your Phone Number</h4>
+                            <p>Use the format +254XXXXXXXXX (Kenyan mobile number) to simulate a real USSD session.</p>
+                        </div>
+                    </div>
+                    <div class="instruction-step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>Start USSD Session</h4>
+                            <p>Click "Start Session" to initiate the USSD menu. You'll see the main menu options.</p>
+                        </div>
+                    </div>
+                    <div class="instruction-step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>Navigate the Menus</h4>
+                            <p>Use the number pad to select options. Press "Send" to submit your choice.</p>
+                        </div>
+                    </div>
+                    <div class="instruction-step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h4>Get Your Advisory</h4>
+                            <p>Follow the prompts to register or get farming advice based on your location and crop.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Menu Flow -->
+                <div class="menu-flow">
+                    <h3 class="flow-title">USSD Menu Structure</h3>
+                    <div class="flow-diagram">
+                        <div class="flow-level">
+                            <div class="flow-item main-menu">
+                                <strong>Main Menu</strong>
+                                <div class="menu-options">
+                                    1. Register<br>
+                                    2. Get Advice<br>
+                                    3. My Info
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flow-level">
+                            <div class="flow-item">
+                                <strong>1. Register</strong>
+                                <div class="menu-options">
+                                    Select Location<br>
+                                    Select Crop<br>
+                                    Confirm
+                                </div>
+                            </div>
+                            <div class="flow-item">
+                                <strong>2. Get Advice</strong>
+                                <div class="menu-options">
+                                    Get instant advisory<br>
+                                    based on your profile
+                                </div>
+                            </div>
+                            <div class="flow-item">
+                                <strong>3. My Info</strong>
+                                <div class="menu-options">
+                                    View your details<br>
+                                    and advisory history
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- USSD Simulator Container -->
+            <div class="ussd-container">
+                
+                <!-- Phone Frame -->
+                <div class="phone-frame">
+                    <!-- Phone Header -->
+                    <div class="phone-header">
+                        <div class="phone-status">
+                            <span>📶</span>
+                            <span>🔋</span>
+                            <span>📶 Safaricom</span>
+                        </div>
+                        <div class="phone-time" id="phoneTime">10:30</div>
+                    </div>
+
+                    <!-- USSD Display -->
+                    <div class="ussd-display">
+                        <div class="ussd-content">
+                            <div class="ussd-header-bar">
+                                <span>USSD</span>
+                                <span id="sessionStatus">Not Connected</span>
+                            </div>
+                            <div class="ussd-screen" id="ussdScreen">
+                                <div class="welcome-message">
+                                    <p>📱 USSD Simulator Ready</p>
+                                    <p>Enter your phone number and start a session to test the MawinguOps farming advisory service.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Phone Input Section -->
+                    <div class="phone-input-section">
+                        <label class="phone-label" for="phoneNumber">Your Phone Number:</label>
+                        <input 
+                            type="tel" 
+                            id="phoneNumber" 
+                            class="phone-input" 
+                            placeholder="+254XXXXXXXXX"
+                            value="+254712345678"
+                        >
+                        <p class="phone-hint">Use format: +254XXXXXXXXX</p>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="ussd-actions">
+                        <button class="action-btn start-btn" id="startSession">Start Session</button>
+                        <button class="action-btn" id="endSession" disabled>End Session</button>
+                    </div>
+
+                    <!-- Number Pad -->
+                    <div class="number-pad">
+                        <div class="number-row">
+                            <button class="number-btn" data-digit="1">1<span class="letters"></span></button>
+                            <button class="number-btn" data-digit="2">2<span class="letters">ABC</span></button>
+                            <button class="number-btn" data-digit="3">3<span class="letters">DEF</span></button>
+                        </div>
+                        <div class="number-row">
+                            <button class="number-btn" data-digit="4">4<span class="letters">GHI</span></button>
+                            <button class="number-btn" data-digit="5">5<span class="letters">JKL</span></button>
+                            <button class="number-btn" data-digit="6">6<span class="letters">MNO</span></button>
+                        </div>
+                        <div class="number-row">
+                            <button class="number-btn" data-digit="7">7<span class="letters">PQRS</span></button>
+                            <button class="number-btn" data-digit="8">8<span class="letters">TUV</span></button>
+                            <button class="number-btn" data-digit="9">9<span class="letters">WXYZ</span></button>
+                        </div>
+                        <div class="number-row">
+                            <button class="number-btn special" data-digit="*">*</button>
+                            <button class="number-btn" data-digit="0">0<span class="letters">+</span></button>
+                            <button class="number-btn special" data-digit="#">#</button>
+                        </div>
+                    </div>
+
+                    <!-- Control Buttons -->
+                    <div class="control-buttons">
+                        <button class="control-btn" id="clearBtn">Clear</button>
+                        <button class="control-btn send-btn" id="sendBtn" disabled>Send</button>
+                        <button class="control-btn cancel-btn" id="cancelBtn" disabled>Cancel</button>
+                    </div>
+
+                    <!-- Current Input Display -->
+                    <div class="current-input">
+                        <label class="input-label">Current Input:</label>
+                        <div class="input-display" id="currentInput"></div>
+                    </div>
+                </div>
+
+                <!-- Session Panel -->
+                <div class="session-panel">
+                    <h3 class="panel-title">Session Information</h3>
+                    
+                    <div class="session-info">
+                        <div class="info-row">
+                            <span class="info-label">Phone Number:</span>
+                            <span class="info-value" id="displayPhoneNumber">Not set</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Session ID:</span>
+                            <span class="info-value" id="displaySessionId">None</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Current Input:</span>
+                            <span class="info-value" id="displayCurrentInput">None</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Session Active:</span>
+                            <span class="info-value" id="displaySessionActive">No</span>
+                        </div>
+                    </div>
+
+                    <!-- Message History -->
+                    <div class="message-history">
+                        <div class="history-title">
+                            Message History
+                            <button class="clear-history-btn" id="clearHistory">Clear</button>
+                        </div>
+                        <div class="history-list" id="messageHistory">
+                            <p style="color: #999; text-align: center; padding: 20px;">No messages yet</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        /**
+         * USSD Simulator JavaScript
+         */
+        class USSDSimulator {
+            constructor() {
+                this.sessionId = null;
+                this.phoneNumber = '';
+                this.currentInput = '';
+                this.sessionActive = false;
+                this.messageHistory = [];
+                
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.updateTime();
+                setInterval(() => this.updateTime(), 1000);
+                
+                console.log("[USSD] Simulator initialized");
+            }
+
+            setupEventListeners() {
+                // Phone number input
+                document.getElementById('phoneNumber').addEventListener('input', (e) => {
+                    this.phoneNumber = e.target.value;
+                    this.updateDisplay();
+                });
+
+                // Session controls
+                document.getElementById('startSession').addEventListener('click', () => this.startSession());
+                document.getElementById('endSession').addEventListener('click', () => this.endSession());
+
+                // Number pad
+                document.querySelectorAll('.number-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const digit = btn.getAttribute('data-digit');
+                        this.addDigit(digit);
+                    });
+                });
+
+                // Control buttons
+                document.getElementById('clearBtn').addEventListener('click', () => this.clearInput());
+                document.getElementById('sendBtn').addEventListener('click', () => this.sendInput());
+                document.getElementById('cancelBtn').addEventListener('click', () => this.cancelSession());
+                document.getElementById('clearHistory').addEventListener('click', () => this.clearHistory());
+            }
+
+            updateTime() {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false
+                });
+                document.getElementById('phoneTime').textContent = timeString;
+            }
+
+            async startSession() {
+                if (!this.phoneNumber || this.phoneNumber.length < 13) {
+                    alert('Please enter a valid phone number (+254XXXXXXXXX)');
+                    return;
+                }
+
+                console.log(`[USSD] Starting session for ${this.phoneNumber}`);
+                
+                try {
+                    this.sessionId = 'ussd_' + Date.now();
+                    this.sessionActive = true;
+                    this.currentInput = '';
+                    
+                    // Make API call to start USSD session
+                    const response = await fetch('/api/ussd/simulate', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            phoneNumber: this.phoneNumber,
+                            sessionId: this.sessionId,
+                            text: ''
+                        })
+                    });
+
+                    const data = await response.json();
+                    
+                    if (data.response) {
+                        this.displayUSSDResponse(data.response, data.continueSession);
+                        this.addToHistory('system', data.response);
+                    }
+                    
+                    this.updateDisplay();
+                    this.enableControls();
+                    
+                } catch (error) {
+                    console.error('[USSD] Error starting session:', error);
+                    this.showError('Failed to start USSD session. Please try again.');
+                }
+            }
+
+            async sendInput() {
+                if (!this.sessionActive || this.currentInput === '') {
+                    return;
+                }
+
+                console.log(`[USSD] Sending input: ${this.currentInput}`);
+                
+                try {
+                    // Add user input to history
+                    this.addToHistory('user', this.currentInput);
+                    
+                    // Make API call
+                    const response = await fetch('/api/ussd/simulate', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            phoneNumber: this.phoneNumber,
+                            sessionId: this.sessionId,
+                            text: this.currentInput
+                        })
+                    });
+
+                    const data = await response.json();
+                    
+                    if (data.response) {
+                        this.displayUSSDResponse(data.response, data.continueSession);
+                        this.addToHistory('system', data.response);
+                        
+                        if (!data.continueSession) {
+                            this.endSession();
+                        }
+                    }
+                    
+                    this.clearInput();
+                    
+                } catch (error) {
+                    console.error('[USSD] Error sending input:', error);
+                    this.showError('Failed to send input. Please try again.');
+                }
+            }
+
+            displayUSSDResponse(response, continueSession) {
+                const screen = document.getElementById('ussdScreen');
+                screen.textContent = response.replace(/^(CON|END)\s*/, '');
+                
+                // Update session status
+                const status = document.getElementById('sessionStatus');
+                status.textContent = continueSession ? 'Active' : 'Ended';
+                
+                if (!continueSession) {
+                    this.sessionActive = false;
+                    this.disableControls();
+                }
+            }
+
+            addDigit(digit) {
+                if (!this.sessionActive) return;
+                
+                this.currentInput += digit;
+                this.updateDisplay();
+            }
+
+            clearInput() {
+                this.currentInput = '';
+                this.updateDisplay();
+            }
+
+            cancelSession() {
+                this.endSession();
+            }
+
+            endSession() {
+                console.log('[USSD] Ending session');
+                
+                this.sessionId = null;
+                this.sessionActive = false;
+                this.currentInput = '';
+                
+                const screen = document.getElementById('ussdScreen');
+                screen.innerHTML = '<div class="welcome-message"><p>📱 Session Ended</p><p>Thank you for using MawinguOps USSD service!</p></div>';
+                
+                this.updateDisplay();
+                this.disableControls();
+            }
+
+            enableControls() {
+                document.getElementById('startSession').disabled = true;
+                document.getElementById('endSession').disabled = false;
+                document.getElementById('sendBtn').disabled = false;
+                document.getElementById('cancelBtn').disabled = false;
+                
+                document.querySelectorAll('.number-btn').forEach(btn => {
+                    btn.disabled = false;
+                });
+            }
+
+            disableControls() {
+                document.getElementById('startSession').disabled = false;
+                document.getElementById('endSession').disabled = true;
+                document.getElementById('sendBtn').disabled = true;
+                document.getElementById('cancelBtn').disabled = true;
+                
+                document.querySelectorAll('.number-btn').forEach(btn => {
+                    btn.disabled = false; // Keep number pad enabled for phone number entry
+                });
+            }
+
+            updateDisplay() {
+                // Update current input displays
+                document.getElementById('currentInput').textContent = this.currentInput || 'None';
+                document.getElementById('displayCurrentInput').textContent = this.currentInput || 'None';
+                
+                // Update session info
+                document.getElementById('displayPhoneNumber').textContent = this.phoneNumber || 'Not set';
+                document.getElementById('displaySessionId').textContent = this.sessionId || 'None';
+                document.getElementById('displaySessionActive').textContent = this.sessionActive ? 'Yes' : 'No';
+            }
+
+            addToHistory(type, message) {
+                const timestamp = new Date().toLocaleTimeString();
+                this.messageHistory.push({ type, message, timestamp });
+                
+                this.updateHistoryDisplay();
+            }
+
+            updateHistoryDisplay() {
+                const historyContainer = document.getElementById('messageHistory');
+                
+                if (this.messageHistory.length === 0) {
+                    historyContainer.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No messages yet</p>';
+                    return;
+                }
+                
+                historyContainer.innerHTML = this.messageHistory
+                    .slice(-10) // Show last 10 messages
+                    .map(msg => `
+                        <div class="history-item ${msg.type}">
+                            <div class="message-time">${msg.timestamp}</div>
+                            <div class="message-content">${msg.message}</div>
+                            <button class="copy-message-btn" onclick="navigator.clipboard.writeText('${msg.message.replace(/'/g, "\\'")}')">📋</button>
+                        </div>
+                    `).join('');
+                
+                // Scroll to bottom
+                historyContainer.scrollTop = historyContainer.scrollHeight;
+            }
+
+            clearHistory() {
+                this.messageHistory = [];
+                this.updateHistoryDisplay();
+            }
+
+            showError(message) {
+                const screen = document.getElementById('ussdScreen');
+                screen.innerHTML = `<div class="welcome-message"><p>❌ Error</p><p>${message}</p></div>`;
+            }
+        }
+
+        // Initialize simulator when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            window.ussdSimulator = new USSDSimulator();
+        });
+    </script>
+</body>
+</html>
