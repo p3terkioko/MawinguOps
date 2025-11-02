@@ -4,86 +4,227 @@
 
 MawinguOps is an AI-powered farming advisory system that provides real-time planting recommendations to smallholder farmers in Machakos County, Kenya through SMS, USSD, and web interfaces.
 
+## System Architecture & Scalability
+
 ```mermaid
 graph TD
-    %% External Users
-    Farmers[Farmers - SMS and USSD Users]
-    WebUsers[Web Users - Browser Interface]
+    %% External Traffic Sources
+    subgraph Traffic[Traffic Sources]
+        USSD[USSD Traffic *384*7460#]
+        SMS[SMS Commands MAWINGU]
+        Web[Web Browser Traffic]
+        API[API Consumer Traffic]
+    end
+    
+    %% Google Cloud Platform Infrastructure
+    subgraph GCP[Google Cloud Platform Infrastructure]
+        %% Edge Layer
+        subgraph Edge[Global Edge Layer]
+            CDN[Cloud CDN Global Distribution]
+            LB[Cloud Load Balancer SSL Termination]
+        end
+        
+        %% Compute Layer with Scaling Details
+        subgraph Compute[Serverless Compute Layer]
+            CloudRun[Cloud Run Service mawingu-ops]
+            
+            %% Scaling Configuration
+            subgraph ScaleConfig[Auto-Scaling Configuration]
+                Scale0[IDLE STATE 0 instances Cost 0 dollars per hour]
+                Scale1[LOW TRAFFIC 1-5 instances 100-500 concurrent users]
+                Scale50[MEDIUM TRAFFIC 5-50 instances 500-5000 concurrent users]
+                Scale100[HIGH TRAFFIC 50-100 instances 5000-10000 concurrent users]
+            end
+            
+            %% Instance Specifications
+            subgraph InstanceSpec[Instance Specifications]
+                CPU[2 vCPU per instance]
+                RAM[2GB RAM per instance]
+                Concurrency[100 concurrent requests per instance]
+                Timeout[Request timeout 300 seconds]
+            end
+            
+            %% Auto-Scaling Triggers
+            subgraph AutoScale[Auto-Scaling Triggers]
+                CPUTrigger[CPU Utilization 80 percent threshold]
+                MemoryTrigger[Memory Utilization 85 percent threshold]
+                ConcurrencyTrigger[Concurrent requests 90 per instance]
+                ScaleUpTime[Scale up time 30 seconds]
+                ScaleDownTime[Scale down time 15 minutes idle]
+            end
+        end
+        
+        %% Data Layer
+        subgraph Data[Data & Storage Layer]
+            Runtime[Container File System SQLite Database]
+            Secrets[Secret Manager API Keys Environment Variables]
+            Logs[Cloud Logging Request Response Logs]
+        end
+        
+        %% Monitoring Layer
+        subgraph Monitor[Monitoring & Observability]
+            Metrics[Cloud Monitoring CPU Memory Network]
+            Alerting[Cloud Alerting Error Rate Response Time]
+            Tracing[Cloud Trace Request Flow Analysis]
+        end
+    end
     
     %% External Services
-    OpenMeteo[Open-Meteo API - Weather Data Service]
-    HttpSMS[HttpSMS.com - SMS Gateway]
-    ATalking[Africas Talking - USSD Gateway]
-    
-    %% Google Cloud Platform
-    subgraph GCP[Google Cloud Platform]
-        CloudRun[Google Cloud Run - MawinguOps Server]
-        
-        subgraph Storage[Application Storage]
-            SQLite[SQLite Database]
-            MLModel[ML Model - maize planting model]
-        end
+    subgraph External[External Service Dependencies]
+        AT[Africas Talking USSD SMS Gateway]
+        HttpSMS[HttpSMS SMS Gateway]
+        OpenMeteo[Open-Meteo Weather API]
+        Gemini[Google Gemini AI API]
     end
     
-    %% Application Architecture
-    subgraph AppCore[MawinguOps Core Application]
-        Server[Express Server - server.js]
-        
-        subgraph Services[Core Services]
-            WeatherSvc[weatherService.js]
-            AdvisorySvc[advisoryEngine.js]
-            SMSSvc[smsService.js]
-            USSDSvc[ussdService.js]
-            MLSvc[mlPredictor.js]
-            DBSvc[database.js]
-        end
-        
-        subgraph Frontend[Frontend Layer]
-            StaticFiles[Static Assets]
-            USSDSim[USSD Simulator]
-        end
+    %% Traffic Flow
+    USSD --> AT
+    SMS --> HttpSMS
+    Web --> CDN
+    API --> LB
+    
+    AT --> LB
+    HttpSMS --> LB
+    CDN --> LB
+    LB --> CloudRun
+    
+    %% Auto-scaling connections
+    CloudRun --> ScaleConfig
+    CloudRun --> InstanceSpec
+    CloudRun --> AutoScale
+    
+    %% Infrastructure connections
+    CloudRun --> Data
+    CloudRun --> Monitor
+    CloudRun --> External
+    
+    %% Styling for different components
+    classDef traffic fill:#e3f2fd,stroke:#1976d2,stroke-width:3px
+    classDef gcp fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    classDef scaling fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    classDef external fill:#fce4ec,stroke:#d81b60,stroke-width:2px
+    classDef compute fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    
+    class Traffic,USSD,SMS,Web,API traffic
+    class GCP,Edge,Compute,Data,Monitor gcp
+    class ScaleConfig,InstanceSpec,AutoScale,Scale0,Scale1,Scale50,Scale100 scaling
+    class External,AT,HttpSMS,OpenMeteo,Gemini external
+    class CloudRun,CDN,LB compute
+```
+
+## USSD User Journey Process Flow
+
+```mermaid
+sequenceDiagram
+    participant Farmer as Farmer in Field
+    participant Phone as Mobile Phone
+    participant AT as Africas Talking Gateway
+    participant LB as Cloud Load Balancer
+    participant CR as Cloud Run Instance
+    participant USSD as USSD Service
+    participant DB as SQLite Database
+    participant Weather as Weather Service
+    participant Advisory as Advisory Engine
+    participant AI as Gemini AI
+    participant MeteoAPI as Open-Meteo API
+    
+    %% Step 1: Farmer Initiates USSD
+    Note over Farmer,MeteoAPI: Step 1 - Farmer Dials USSD Code
+    Farmer->>Phone: Dial *384*7460#
+    Phone->>+AT: USSD Request initiated
+    Note over AT: Creates Session ID ATUid_12345<br/>Allocates session resources
+    
+    %% Step 2: Initial Webhook Call
+    Note over Farmer,MeteoAPI: Step 2 - First API Call to MawinguOps
+    AT->>+LB: POST /api/ussd/webhook<br/>sessionId phoneNumber text empty
+    Note over LB: Routes request based on<br/>geographic location and load
+    LB->>+CR: Forward to available instance
+    Note over CR: SCALING EVENT<br/>0 instances → 1 instance<br/>Cold start 2-3 seconds
+    
+    %% Step 3: Main Menu Display
+    Note over Farmer,MeteoAPI: Step 3 - Main Menu Processing
+    CR->>+USSD: processUSSDRequest empty input
+    USSD->>USSD: Parse session data<br/>Initialize user state
+    USSD->>USSD: Generate main menu<br/>1.Get Advisory 2.Register 3.Info 4.Help
+    USSD-->>-CR: CON Welcome to MawinguOps<br/>Select option 1-4
+    CR-->>-LB: USSD response formatted
+    LB-->>-AT: Menu text response
+    AT-->>Phone: Display menu on phone
+    Phone-->>Farmer: Shows menu options
+    
+    %% Step 4: User Selection - Get Advisory
+    Note over Farmer,MeteoAPI: Step 4 - User Selects Get Advisory
+    Farmer->>Phone: Press 1 for Get Advisory
+    Phone->>+AT: User input 1
+    AT->>+LB: POST /api/ussd/webhook<br/>sessionId phoneNumber text 1
+    LB->>+CR: Route to same instance if available
+    
+    %% Step 5: Check Farmer Registration
+    Note over Farmer,MeteoAPI: Step 5 - Check User Registration Status
+    CR->>+USSD: processUSSDRequest input 1
+    USSD->>+DB: SELECT farmer WHERE phone_number
+    Note over DB: Database query<br/>Check if user exists
+    
+    alt Farmer Already Registered
+        DB-->>USSD: Returns farmer profile<br/>location crop preferences
+        USSD->>USSD: Generate crop selection menu<br/>based on registration
+        USSD-->>CR: CON Select your crop<br/>1.Maize 2.Beans 3.Sorghum
+    else Farmer Not Registered
+        DB-->>USSD: No farmer record found
+        USSD->>USSD: Generate registration flow<br/>location selection first
+        USSD-->>CR: CON Please register first<br/>Select location 1.Vota 2.Kathiani
     end
     
-    %% SMS Flow
-    Farmers --> HttpSMS
-    HttpSMS --> CloudRun
-    CloudRun --> Server
-    Server --> SMSSvc
-    SMSSvc --> WeatherSvc
-    WeatherSvc --> OpenMeteo
-    WeatherSvc --> AdvisorySvc
-    AdvisorySvc --> MLSvc
-    MLSvc --> MLModel
-    AdvisorySvc --> DBSvc
-    DBSvc --> SQLite
-    SMSSvc --> HttpSMS
-    HttpSMS --> Farmers
+    DB-->>-USSD: Database response complete
+    CR-->>-LB: Crop selection or registration menu
+    LB-->>-AT: Response text
+    AT-->>Phone: Display options
+    Phone-->>Farmer: Show crop or location menu
     
-    %% USSD Flow  
-    Farmers --> ATalking
-    ATalking --> CloudRun
-    USSDSvc --> WeatherSvc
-    USSDSvc --> AdvisorySvc
-    USSDSvc --> ATalking
+    %% Step 6: Final Selection and Advisory Generation
+    Note over Farmer,MeteoAPI: Step 6 - Generate Weather Advisory
+    Farmer->>Phone: Select 1 for Maize
+    Phone->>+AT: User input 1*1
+    AT->>+LB: POST /api/ussd/webhook<br/>sessionId phoneNumber text 1*1
+    LB->>+CR: Route request
     
-    %% Web Flow
-    WebUsers --> CloudRun
-    CloudRun --> StaticFiles
-    StaticFiles --> Server
-    Server --> WeatherSvc
-    Server --> AdvisorySvc
-    Server --> WebUsers
+    CR->>+USSD: processUSSDRequest input 1*1
+    USSD->>USSD: Parse selection<br/>Advisory for Maize in Vota
     
-    %% Styling
-    classDef external fill:#e1f5fe,stroke:#01579b,stroke-width:2px
-    classDef gcp fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
-    classDef service fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
-    classDef storage fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    %% Parallel Processing for Advisory
+    Note over Farmer,MeteoAPI: Step 7 - Parallel Data Processing
+    par Fetch Weather Data
+        USSD->>+Weather: getWeather location Vota
+        Weather->>+MeteoAPI: GET weather forecast API
+        Note over MeteoAPI: External API call<br/>7-day forecast data<br/>temperature rainfall
+        MeteoAPI-->>-Weather: Weather JSON response<br/>temperature precipitation probability
+        Weather-->>-USSD: Processed weather data
+    and Generate AI Advisory
+        USSD->>+Advisory: generateAdvisory crop Maize weather
+        Advisory->>+AI: Enhanced advisory prompt<br/>crop requirements weather conditions
+        Note over AI: Google Gemini AI processing<br/>Generate farming advice<br/>Consider local conditions
+        AI-->>-Advisory: AI-generated advisory text<br/>planting recommendations timing
+        Advisory-->>-USSD: Complete advisory object
+    and Save Session Data
+        USSD->>+DB: INSERT advisory_request<br/>phone crop location timestamp
+        Note over DB: Log user interaction<br/>for analytics and history
+        DB-->>-USSD: Saved successfully
+    end
     
-    class Farmers,WebUsers,OpenMeteo,HttpSMS,ATalking external
-    class GCP,CloudRun gcp
-    class WeatherSvc,AdvisorySvc,SMSSvc,USSDSvc,MLSvc,DBSvc service
-    class SQLite,MLModel storage
+    %% Step 8: Final Response
+    Note over Farmer,MeteoAPI: Step 8 - Send Complete Advisory
+    USSD->>USSD: Format advisory for USSD display<br/>160 character limit handling
+    USSD-->>-CR: END Advisory for Maize in Vota<br/>PLANT NOW conditions favorable<br/>Expected rainfall 45mm
+    CR-->>-LB: Final advisory response
+    LB-->>-AT: Advisory text complete
+    AT-->>Phone: Display complete advisory
+    Phone-->>Farmer: Shows farming advice
+    
+    %% Step 9: Session Cleanup and Scaling
+    Note over Farmer,MeteoAPI: Step 9 - Session Complete and Auto-Scale
+    Note over AT: Session terminated<br/>Resources deallocated<br/>SessionID expires
+    Note over CR: SCALING EVENT<br/>No new requests for 15 minutes<br/>Instance scales down to 0<br/>Cost optimization active
+    Note over Farmer: Farmer receives complete<br/>weather-based advisory<br/>Can act on recommendations
 ```
 
 ## System Components

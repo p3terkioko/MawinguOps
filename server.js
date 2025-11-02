@@ -9,6 +9,8 @@ const weatherService = require('./weatherService');
 const advisoryEngine = require('./advisoryEngine');
 const MLPredictor = require('./mlPredictor');
 const smsService = require('./smsService');
+const ussdService = require('./ussdService');
+const africasTalkingService = require('./africasTalkingService');
 
 // Create Express app
 const app = express();
@@ -817,7 +819,186 @@ app.get('/api/advisories', async (req, res) => {
     }
 });
 
-// USSD simulation endpoint
+/**
+ * AFRICA'S TALKING USSD ENDPOINTS
+ */
+
+// Main USSD webhook endpoint for Africa's Talking
+app.post('/api/ussd/webhook', async (req, res) => {
+    try {
+        const { sessionId, serviceCode, phoneNumber, text } = req.body;
+        
+        console.log(`[USSD Webhook] Received request:`, {
+            sessionId,
+            serviceCode, 
+            phoneNumber,
+            text: text || '(empty)'
+        });
+
+        // Validate required parameters from Africa's Talking
+        if (!sessionId || !phoneNumber) {
+            console.error('[USSD Webhook] Missing required parameters:', req.body);
+            return res.status(400).send("END Invalid request parameters.\n\n- MawinguOps");
+        }
+
+        // Process the USSD request through our service
+        const response = await ussdService.processUSSDRequest({
+            sessionId,
+            serviceCode: serviceCode || '*384*7460#',
+            phoneNumber,
+            text: text || ''
+        });
+
+        console.log(`[USSD Webhook] Sending response to ${phoneNumber}:`, response.substring(0, 100) + '...');
+        
+        // Send response back to Africa's Talking
+        res.set('Content-Type', 'text/plain');
+        res.send(response);
+
+    } catch (error) {
+        console.error('[USSD Webhook] Error processing request:', error);
+        res.set('Content-Type', 'text/plain');
+        res.send("END Service temporarily unavailable. Please try again later.\n\n- MawinguOps");
+    }
+});
+
+// USSD test endpoint for development/testing
+app.post('/api/ussd/test', async (req, res) => {
+    try {
+        const { phoneNumber, input } = req.body;
+        
+        if (!phoneNumber) {
+            return res.status(400).json({
+                error: 'phoneNumber is required'
+            });
+        }
+
+        console.log(`[USSD Test] Testing with phone: ${phoneNumber}, input: "${input || ''}"`);
+        
+        const response = await ussdService.testUSSD(phoneNumber, input || '');
+        
+        res.json({
+            success: true,
+            phoneNumber,
+            input: input || '',
+            response,
+            timestamp: new Date().toISOString()
+        });
+
+    } catch (error) {
+        console.error('[USSD Test] Error:', error);
+        res.status(500).json({
+            error: 'Test failed',
+            details: error.message
+        });
+    }
+});
+
+// Get USSD service status
+app.get('/api/ussd/status', (req, res) => {
+    try {
+        res.json({
+            success: true,
+            service: 'Africa\'s Talking USSD',
+            shortcode: process.env.AT_SHORTCODE || 'Not configured',
+            webhook_url: '/api/ussd/webhook',
+            test_url: '/api/ussd/test',
+            status: 'Ready',
+            sessions: ussdService.sessions ? ussdService.sessions.size : 0,
+            message: 'USSD service is ready to receive webhook calls from Africa\'s Talking'
+        });
+    } catch (error) {
+        res.status(500).json({
+            error: 'Failed to get USSD status',
+            details: error.message
+        });
+    }
+});
+
+/**
+ * AFRICA'S TALKING SERVICE ENDPOINTS
+ */
+
+// Get Africa's Talking service status
+app.get('/api/africastalking/status', (req, res) => {
+    try {
+        const status = africasTalkingService.getStatus();
+        res.json({
+            success: true,
+            africasTalking: status,
+            message: status.initialized 
+                ? 'Africa\'s Talking service is configured and ready'
+                : 'Africa\'s Talking service not properly configured'
+        });
+    } catch (error) {
+        res.status(500).json({
+            error: 'Failed to get Africa\'s Talking status',
+            details: error.message
+        });
+    }
+});
+
+// Test Africa's Talking connection
+app.get('/api/africastalking/test', async (req, res) => {
+    try {
+        const result = await africasTalkingService.testConnection();
+        
+        if (result.success) {
+            res.json({
+                success: true,
+                message: 'Africa\'s Talking connection successful',
+                result: result
+            });
+        } else {
+            res.status(503).json({
+                success: false,
+                message: 'Africa\'s Talking connection failed',
+                error: result.error
+            });
+        }
+    } catch (error) {
+        res.status(500).json({
+            error: 'Test failed',
+            details: error.message
+        });
+    }
+});
+
+// Send SMS via Africa's Talking (alternative to HttpSMS)
+app.post('/api/africastalking/sms', async (req, res) => {
+    try {
+        const { to, message, from } = req.body;
+        
+        if (!to || !message) {
+            return res.status(400).json({
+                error: 'Both "to" and "message" are required'
+            });
+        }
+        
+        const result = await africasTalkingService.sendSMS(to, message, from);
+        
+        if (result.success) {
+            res.json({
+                success: true,
+                message: 'SMS sent via Africa\'s Talking',
+                result: result.result
+            });
+        } else {
+            res.status(500).json({
+                success: false,
+                error: result.error
+            });
+        }
+        
+    } catch (error) {
+        res.status(500).json({
+            error: 'Failed to send SMS',
+            details: error.message
+        });
+    }
+});
+
+// USSD simulation endpoint (for development/testing)
 app.post('/api/ussd/simulate', async (req, res) => {
     try {
         const { phoneNumber, sessionId, text } = req.body;
@@ -1415,19 +1596,31 @@ async function startServer() {
             console.log(`[Server] USSD simulator: http://localhost:${PORT}/ussd-simulator.html`);
             console.log('');
             console.log('Available API Endpoints:');
-            console.log('- GET  /api/health          - Health check');
-            console.log('- GET  /api/locations       - Available locations');
-            console.log('- GET  /api/crops           - Available crops');
-            console.log('- GET  /api/weather         - Weather data');
-            console.log('- GET  /api/advisory        - Farming advisory');
-            console.log('- POST /api/register        - Register farmer');
-            console.log('- GET  /api/farmers         - Get all farmers');
-            console.log('- GET  /api/farmers/:phone  - Get specific farmer');
-            console.log('- DEL  /api/farmers/:phone  - Delete farmer');
-            console.log('- GET  /api/advisories      - Advisory history');
-            console.log('- POST /api/ussd/simulate   - USSD simulation');
-            console.log('- POST /api/sms/webhook     - SMS webhook (for incoming messages)');
-            console.log('- POST /api/sms/test-command - Test SMS command parsing');
+            console.log('- GET  /api/health              - Health check');
+            console.log('- GET  /api/locations           - Available locations');
+            console.log('- GET  /api/crops               - Available crops');
+            console.log('- GET  /api/weather             - Weather data');
+            console.log('- GET  /api/advisory            - Farming advisory');
+            console.log('- POST /api/register            - Register farmer');
+            console.log('- GET  /api/farmers             - Get all farmers');
+            console.log('- GET  /api/farmers/:phone      - Get specific farmer');
+            console.log('- DEL  /api/farmers/:phone      - Delete farmer');
+            console.log('- GET  /api/advisories          - Advisory history');
+            console.log('');
+            console.log('USSD Endpoints (Africa\'s Talking):');
+            console.log('- POST /api/ussd/webhook        - USSD webhook (production)');
+            console.log('- POST /api/ussd/test           - USSD testing endpoint');
+            console.log('- GET  /api/ussd/status         - USSD service status');
+            console.log('- POST /api/ussd/simulate       - USSD simulation (dev)');
+            console.log('');
+            console.log('Africa\'s Talking Integration:');
+            console.log('- GET  /api/africastalking/status - AT service status');
+            console.log('- GET  /api/africastalking/test   - Test AT connection');
+            console.log('- POST /api/africastalking/sms    - Send SMS via AT');
+            console.log('');
+            console.log('SMS Endpoints (HttpSMS):');
+            console.log('- POST /api/sms/webhook         - SMS webhook (incoming)');
+            console.log('- POST /api/sms/test-command    - Test SMS command parsing');
             console.log('');
             console.log('[Server] System ready for testing! 🚀');
             console.log('='.repeat(60));
