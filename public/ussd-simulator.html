@@ -3,497 +3,433 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>USSD Simulator - MawinguOps</title>
-    <meta name="description" content="Test the MawinguOps USSD service with our interactive simulator">
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body class="ussd-body">
-    <!-- Header -->
-    <header class="ussd-header">
-        <div class="container">
-            <nav class="header-nav">
-                <a href="/" class="back-link">← Back to Home</a>
-                <div class="header-status">
-                    <span class="status-indicator">🟢 Online</span>
-                </div>
-            </nav>
-            <h1 class="ussd-title">USSD Simulator</h1>
-            <p class="ussd-subtitle">Test MawinguOps farming advisory service</p>
-        </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="ussd-main">
-        <div class="container">
+    <title>How It Works - MawinguOps USSD</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            line-height: 1.6;
+            color: #334155;
+        }
+        
+        /* --- Header & Navigation --- */
+        .header {
+            background: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .back-link {
+            color: #16a34a; 
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .hero {
+            background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
+            color: white;
+            text-align: center;
+            padding: 5rem 2rem 8rem 2rem;
+            clip-path: ellipse(100% 60% at 50% 40%);
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .hero p {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            margin-top: -5rem; 
+        }
+        
+        /* --- Step Sections --- */
+        .step {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            padding: 3rem 0;
+            margin-bottom: 3rem;
+        }
+        
+        
+        .step-content {
+            padding: 1rem;
+        }
+        
+        .step-number {
+            background: #22c55e;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+        }
+        
+        .step-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 1rem;
+        }
+        
+        .step-desc {
+            font-size: 1.1rem;
+            color: #475569;
+            margin-bottom: 2rem;
+        }
+        
+        .step-features {
+            list-style: none;
+        }
+        
+        .step-features li {
+            padding: 0.5rem 0;
+            color: #475569;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+        }
+        
+        .step-features li:before {
+            content: "✓";
+            background: #22c55e;
+            color: white;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+        
+        .step-image {
+            text-align: center;
+        }
+        
+        .phone-mockup {
+            width: 300px;
+            height: 600px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            margin: 0 auto;
+            transition: transform 0.3s ease, filter 0.3s ease;
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.1));
+        }
+        
+        .phone-mockup:hover {
+            transform: scale(1.05) translateY(-5px);
+            filter: drop-shadow(0 15px 30px rgba(0,0,0,0.15));
+        }
+        
+        .demo-controls {
+            background: white;
+            padding: 3rem;
+            text-align: center;
+            border-radius: 20px;
+            margin: 4rem 0;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        }
+        
+        .demo-title {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #1e293b;
+        }
+        
+        .demo-subtitle {
+            color: #64748b;
+            margin-bottom: 2rem;
+        }
+        
+        .btn {
+            background: #22c55e;
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0.5rem 0.5rem;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        
+        .btn:hover {
+            background: #16a34a;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+        }
+        
+        .btn.secondary {
+            background: #f1f5f9;
+            color: #475569;
+        }
+        
+        .btn.secondary:hover {
+            background: #e2e8f0;
+            box-shadow: none;
+        }
+        @media (max-width: 768px) {
+            .step {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                text-align: center;
+            }
             
-            <!-- Instructions Panel -->
-            <div class="instructions-panel">
-                <h2 class="instructions-title">How to Use the USSD Simulator</h2>
-                <div class="instructions-content">
-                    <div class="instruction-step">
-                        <div class="step-number">1</div>
-                        <div class="step-content">
-                            <h4>Enter Your Phone Number</h4>
-                            <p>Use the format +254XXXXXXXXX (Kenyan mobile number) to simulate a real USSD session.</p>
-                        </div>
-                    </div>
-                    <div class="instruction-step">
-                        <div class="step-number">2</div>
-                        <div class="step-content">
-                            <h4>Start USSD Session</h4>
-                            <p>Click "Start Session" to initiate the USSD menu. You'll see the main menu options.</p>
-                        </div>
-                    </div>
-                    <div class="instruction-step">
-                        <div class="step-number">3</div>
-                        <div class="step-content">
-                            <h4>Navigate the Menus</h4>
-                            <p>Use the number pad to select options. Press "Send" to submit your choice.</p>
-                        </div>
-                    </div>
-                    <div class="instruction-step">
-                        <div class="step-number">4</div>
-                        <div class="step-content">
-                            <h4>Get Your Advisory</h4>
-                            <p>Follow the prompts to register or get farming advice based on your location and crop.</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Menu Flow -->
-                <div class="menu-flow">
-                    <h3 class="flow-title">USSD Menu Structure</h3>
-                    <div class="flow-diagram">
-                        <div class="flow-level">
-                            <div class="flow-item main-menu">
-                                <strong>Main Menu</strong>
-                                <div class="menu-options">
-                                    1. Register<br>
-                                    2. Get Advice<br>
-                                    3. My Info
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flow-level">
-                            <div class="flow-item">
-                                <strong>1. Register</strong>
-                                <div class="menu-options">
-                                    Select Location<br>
-                                    Select Crop<br>
-                                    Confirm
-                                </div>
-                            </div>
-                            <div class="flow-item">
-                                <strong>2. Get Advice</strong>
-                                <div class="menu-options">
-                                    Get instant advisory<br>
-                                    based on your profile
-                                </div>
-                            </div>
-                            <div class="flow-item">
-                                <strong>3. My Info</strong>
-                                <div class="menu-options">
-                                    View your details<br>
-                                    and advisory history
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            .step-image {
+                order: 1;
+            }
+            .step-content {
+                order: 2;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .step-title {
+                font-size: 2rem;
+            }
+            .step.active {
+            background-color: #f0fdf4; 
+            border-radius: 20px;
+            box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.4);
+            transition: background-color 0.4s ease, box-shadow 0.4s ease;
+        }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <a href="/" class="back-link">← Back to Home</a>
+        </nav>
+    </header>
+    
+    <section class="hero">
+        <h1>A Simple Guide to Our USSD Service</h1>
+        <p>Access smart farming advice instantly from any mobile phone. Here’s how it works.</p>
+    </section>
+    
+    <div class="container">
+        <div class="step">
+            <div class="step-image">
+                <div class="phone-mockup" style="background-image: url('images/iPhone 13 mini - USSD.png');"></div>
             </div>
-
-            <!-- USSD Simulator Container -->
-            <div class="ussd-container">
-                
-                <!-- Phone Frame -->
-                <div class="phone-frame">
-                    <!-- Phone Header -->
-                    <div class="phone-header">
-                        <div class="phone-status">
-                            <span>📶</span>
-                            <span>🔋</span>
-                            <span>📶 Safaricom</span>
-                        </div>
-                        <div class="phone-time" id="phoneTime">10:30</div>
-                    </div>
-
-                    <!-- USSD Display -->
-                    <div class="ussd-display">
-                        <div class="ussd-content">
-                            <div class="ussd-header-bar">
-                                <span>USSD</span>
-                                <span id="sessionStatus">Not Connected</span>
-                            </div>
-                            <div class="ussd-screen" id="ussdScreen">
-                                <div class="welcome-message">
-                                    <p>📱 USSD Simulator Ready</p>
-                                    <p>Enter your phone number and start a session to test the MawinguOps farming advisory service.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Phone Input Section -->
-                    <div class="phone-input-section">
-                        <label class="phone-label" for="phoneNumber">Your Phone Number:</label>
-                        <input 
-                            type="tel" 
-                            id="phoneNumber" 
-                            class="phone-input" 
-                            placeholder="+254XXXXXXXXX"
-                            value="+254712345678"
-                        >
-                        <p class="phone-hint">Use format: +254XXXXXXXXX</p>
-                    </div>
-
-                    <!-- Action Buttons -->
-                    <div class="ussd-actions">
-                        <button class="action-btn start-btn" id="startSession">Start Session</button>
-                        <button class="action-btn" id="endSession" disabled>End Session</button>
-                    </div>
-
-                    <!-- Number Pad -->
-                    <div class="number-pad">
-                        <div class="number-row">
-                            <button class="number-btn" data-digit="1">1<span class="letters"></span></button>
-                            <button class="number-btn" data-digit="2">2<span class="letters">ABC</span></button>
-                            <button class="number-btn" data-digit="3">3<span class="letters">DEF</span></button>
-                        </div>
-                        <div class="number-row">
-                            <button class="number-btn" data-digit="4">4<span class="letters">GHI</span></button>
-                            <button class="number-btn" data-digit="5">5<span class="letters">JKL</span></button>
-                            <button class="number-btn" data-digit="6">6<span class="letters">MNO</span></button>
-                        </div>
-                        <div class="number-row">
-                            <button class="number-btn" data-digit="7">7<span class="letters">PQRS</span></button>
-                            <button class="number-btn" data-digit="8">8<span class="letters">TUV</span></button>
-                            <button class="number-btn" data-digit="9">9<span class="letters">WXYZ</span></button>
-                        </div>
-                        <div class="number-row">
-                            <button class="number-btn special" data-digit="*">*</button>
-                            <button class="number-btn" data-digit="0">0<span class="letters">+</span></button>
-                            <button class="number-btn special" data-digit="#">#</button>
-                        </div>
-                    </div>
-
-                    <!-- Control Buttons -->
-                    <div class="control-buttons">
-                        <button class="control-btn" id="clearBtn">Clear</button>
-                        <button class="control-btn send-btn" id="sendBtn" disabled>Send</button>
-                        <button class="control-btn cancel-btn" id="cancelBtn" disabled>Cancel</button>
-                    </div>
-
-                    <!-- Current Input Display -->
-                    <div class="current-input">
-                        <label class="input-label">Current Input:</label>
-                        <div class="input-display" id="currentInput"></div>
-                    </div>
-                </div>
-
-                <!-- Session Panel -->
-                <div class="session-panel">
-                    <h3 class="panel-title">Session Information</h3>
-                    
-                    <div class="session-info">
-                        <div class="info-row">
-                            <span class="info-label">Phone Number:</span>
-                            <span class="info-value" id="displayPhoneNumber">Not set</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">Session ID:</span>
-                            <span class="info-value" id="displaySessionId">None</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">Current Input:</span>
-                            <span class="info-value" id="displayCurrentInput">None</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">Session Active:</span>
-                            <span class="info-value" id="displaySessionActive">No</span>
-                        </div>
-                    </div>
-
-                    <!-- Message History -->
-                    <div class="message-history">
-                        <div class="history-title">
-                            Message History
-                            <button class="clear-history-btn" id="clearHistory">Clear</button>
-                        </div>
-                        <div class="history-list" id="messageHistory">
-                            <p style="color: #999; text-align: center; padding: 20px;">No messages yet</p>
-                        </div>
-                    </div>
-                </div>
-
+            <div class="step-content">
+                <div class="step-number">1</div>
+                <h2 class="step-title">Dial USSD Code</h2>
+                <p class="step-desc">Farmers simply dial *384*7460# on any mobile phone to instantly access MawinguOps farming advisory service. No internet or smartphone required.</p>
+                <ul class="step-features">
+                    <li>Works on any mobile phone</li>
+                    <li>No internet connection needed</li>
+                    <li>Instant access to farming advice</li>
+                    <li>Available 24/7 across Kenya</li>
+                </ul>
             </div>
         </div>
-    </main>
-
+        
+        <div class="step">
+            <div class="step-content">
+                <div class="step-number">2</div>
+                <h2 class="step-title">Navigate Simple Menu</h2>
+                <p class="step-desc">An intuitive menu system guides farmers through registration and advisory options. The interface is designed for users with basic literacy levels.</p>
+                <ul class="step-features">
+                    <li>Simple numbered menu options</li>
+                    <li>Clear, concise language</li>
+                    <li>Easy navigation with number keys</li>
+                    <li>Multilingual support (English & Swahili)</li>
+                </ul>
+            </div>
+            <div class="step-image">
+                <div class="phone-mockup" style="background-image: url('images/iPhone 13 mini - 1.png');"></div>
+            </div>
+        </div>
+        
+        <div class="step">
+            <div class="step-image">
+                <div class="phone-mockup" style="background-image: url('images/iPhone 13 mini - select crop.png');"></div>
+            </div>
+            <div class="step-content">
+                <div class="step-number">3</div>
+                <h2 class="step-title">Select Your Crop</h2>
+                <p class="step-desc">Farmers choose from supported crops including maize, beans, and sorghum to receive personalized farming recommendations tailored to their specific needs.</p>
+                <ul class="step-features">
+                    <li>Maize planting guidance</li>
+                    <li>Bean cultivation advice</li>
+                    <li>Sorghum growing tips</li>
+                    <li>Location-specific recommendations</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="step">
+            <div class="step-content">
+                <div class="step-number">4</div>
+                <h2 class="step-title">Receive Smart Advisory</h2>
+                <p class="step-desc">Get AI-powered planting recommendations based on real-time weather data, soil conditions, and optimal planting windows for maximum crop yield.</p>
+                <ul class="step-features">
+                    <li>Weather-based planting advice</li>
+                    <li>Optimal timing recommendations</li>
+                    <li>Soil preparation guidance</li>
+                    <li>Seasonal farming calendar</li>
+                </ul>
+            </div>
+            <div class="step-image">
+                <div class="phone-mockup" style="background-image: url('images/iPhone 13 mini - welcome.png');"></div>
+            </div>
+        </div>
+        
+        <div class="demo-controls">
+            <h2 class="demo-title">Try the Simulator</h2>
+            <p class="demo-subtitle">Test the complete USSD flow or connect to our live API</p>
+            <button class="btn" id="startDemo"> Start Interactive Demo</button>
+            <button class="btn secondary" id="testAPI"> Test Live API</button>
+        </div>
+    </div>
+    
     <script>
-        /**
-         * USSD Simulator JavaScript
-         */
         class USSDSimulator {
             constructor() {
-                this.sessionId = null;
-                this.phoneNumber = '';
-                this.currentInput = '';
-                this.sessionActive = false;
-                this.messageHistory = [];
-                
+                // Select all the elements we need to control
+                this.mockups = document.querySelectorAll('.phone-mockup');
+                this.steps = document.querySelectorAll('.step');
+                this.demoControls = document.querySelector('.demo-controls');
                 this.init();
             }
-
+            
             init() {
-                this.setupEventListeners();
-                this.updateTime();
-                setInterval(() => this.updateTime(), 1000);
-                
-                console.log("[USSD] Simulator initialized");
+                document.getElementById('startDemo').addEventListener('click', () => this.startDemo());
+                document.getElementById('testAPI').addEventListener('click', () => this.testAPI());
             }
+            
+            async startDemo() {
+                const btn = document.getElementById('startDemo');
+                btn.textContent = '⏳ Demo in Progress...';
+                btn.disabled = true;
 
-            setupEventListeners() {
-                // Phone number input
-                document.getElementById('phoneNumber').addEventListener('input', (e) => {
-                    this.phoneNumber = e.target.value;
-                    this.updateDisplay();
-                });
+                const firstStepTop = this.steps[0].offsetTop - 100;
+                window.scrollTo({ top: firstStepTop, behavior: 'smooth' });
 
-                // Session controls
-                document.getElementById('startSession').addEventListener('click', () => this.startSession());
-                document.getElementById('endSession').addEventListener('click', () => this.endSession());
+                await this.delay(1000);
 
-                // Number pad
-                document.querySelectorAll('.number-btn').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        const digit = btn.getAttribute('data-digit');
-                        this.addDigit(digit);
+                for (let i = 0; i < this.mockups.length; i++) {
+                    const currentStep = this.steps[i];
+                    const currentMockup = this.mockups[i];
+                    
+                    currentStep.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
                     });
-                });
 
-                // Control buttons
-                document.getElementById('clearBtn').addEventListener('click', () => this.clearInput());
-                document.getElementById('sendBtn').addEventListener('click', () => this.sendInput());
-                document.getElementById('cancelBtn').addEventListener('click', () => this.cancelSession());
-                document.getElementById('clearHistory').addEventListener('click', () => this.clearHistory());
-            }
+                    await this.delay(750);
 
-            updateTime() {
-                const now = new Date();
-                const timeString = now.toLocaleTimeString('en-US', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: false
-                });
-                document.getElementById('phoneTime').textContent = timeString;
-            }
-
-            async startSession() {
-                if (!this.phoneNumber || this.phoneNumber.length < 13) {
-                    alert('Please enter a valid phone number (+254XXXXXXXXX)');
-                    return;
+                    currentStep.classList.add('active');
+                    currentMockup.style.transform = 'scale(1.1)';
+                    currentMockup.style.filter = 'drop-shadow(0 20px 30px rgba(34, 197, 94, 0.3))';
+                    
+                    await this.delay(2000); 
+                    
+                    currentMockup.style.transform = 'scale(1)';
+                    currentMockup.style.filter = 'drop-shadow(0 10px 20px rgba(0,0,0,0.1))';
+                    currentStep.classList.remove('active');
                 }
-
-                console.log(`[USSD] Starting session for ${this.phoneNumber}`);
                 
+                this.demoControls.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                btn.textContent = '🚀 Start Interactive Demo';
+                btn.disabled = false;
+                this.showNotification('Demo completed! 🎉', 'success');
+            }
+            
+            async testAPI() {
                 try {
-                    this.sessionId = 'ussd_' + Date.now();
-                    this.sessionActive = true;
-                    this.currentInput = '';
-                    
-                    // Make API call to start USSD session
-                    const response = await fetch('/api/ussd/simulate', {
+                    const response = await fetch('/api/ussd/test', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            phoneNumber: this.phoneNumber,
-                            sessionId: this.sessionId,
-                            text: ''
-                        })
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ phoneNumber: '+254712345678', text: '' })
                     });
-
-                    const data = await response.json();
                     
-                    if (data.response) {
-                        this.displayUSSDResponse(data.response, data.continueSession);
-                        this.addToHistory('system', data.response);
+                    if (response.ok) {
+                        this.showNotification('✅ API connection successful!', 'success');
+                    } else {
+                        throw new Error('API test failed');
                     }
-                    
-                    this.updateDisplay();
-                    this.enableControls();
-                    
                 } catch (error) {
-                    console.error('[USSD] Error starting session:', error);
-                    this.showError('Failed to start USSD session. Please try again.');
+                    this.showNotification('⚠️ API unavailable - Demo mode active', 'warning');
                 }
             }
-
-            async sendInput() {
-                if (!this.sessionActive || this.currentInput === '') {
-                    return;
-                }
-
-                console.log(`[USSD] Sending input: ${this.currentInput}`);
+            
+            showNotification(message, type) {
+                const notification = document.createElement('div');
+                notification.style.cssText = `
+                    position: fixed; top: 20px; right: 20px; padding: 1rem 1.5rem;
+                    border-radius: 10px; color: white; font-weight: 500; z-index: 1000;
+                    background: ${type === 'success' ? '#22c55e' : '#f59e0b'};
+                    transform: translateX(120%); transition: transform 0.4s ease-in-out;
+                    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+                    font-family: 'Inter', sans-serif;
+                `;
+                notification.textContent = message;
+                document.body.appendChild(notification);
                 
-                try {
-                    // Add user input to history
-                    this.addToHistory('user', this.currentInput);
-                    
-                    // Make API call
-                    const response = await fetch('/api/ussd/simulate', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            phoneNumber: this.phoneNumber,
-                            sessionId: this.sessionId,
-                            text: this.currentInput
-                        })
-                    });
-
-                    const data = await response.json();
-                    
-                    if (data.response) {
-                        this.displayUSSDResponse(data.response, data.continueSession);
-                        this.addToHistory('system', data.response);
-                        
-                        if (!data.continueSession) {
-                            this.endSession();
-                        }
-                    }
-                    
-                    this.clearInput();
-                    
-                } catch (error) {
-                    console.error('[USSD] Error sending input:', error);
-                    this.showError('Failed to send input. Please try again.');
-                }
+                setTimeout(() => notification.style.transform = 'translateX(0)', 10);
+                setTimeout(() => {
+                    notification.style.transform = 'translateX(120%)';
+                    setTimeout(() => document.body.removeChild(notification), 400);
+                }, 4000);
             }
-
-            displayUSSDResponse(response, continueSession) {
-                const screen = document.getElementById('ussdScreen');
-                screen.textContent = response.replace(/^(CON|END)\s*/, '');
-                
-                // Update session status
-                const status = document.getElementById('sessionStatus');
-                status.textContent = continueSession ? 'Active' : 'Ended';
-                
-                if (!continueSession) {
-                    this.sessionActive = false;
-                    this.disableControls();
-                }
-            }
-
-            addDigit(digit) {
-                if (!this.sessionActive) return;
-                
-                this.currentInput += digit;
-                this.updateDisplay();
-            }
-
-            clearInput() {
-                this.currentInput = '';
-                this.updateDisplay();
-            }
-
-            cancelSession() {
-                this.endSession();
-            }
-
-            endSession() {
-                console.log('[USSD] Ending session');
-                
-                this.sessionId = null;
-                this.sessionActive = false;
-                this.currentInput = '';
-                
-                const screen = document.getElementById('ussdScreen');
-                screen.innerHTML = '<div class="welcome-message"><p>📱 Session Ended</p><p>Thank you for using MawinguOps USSD service!</p></div>';
-                
-                this.updateDisplay();
-                this.disableControls();
-            }
-
-            enableControls() {
-                document.getElementById('startSession').disabled = true;
-                document.getElementById('endSession').disabled = false;
-                document.getElementById('sendBtn').disabled = false;
-                document.getElementById('cancelBtn').disabled = false;
-                
-                document.querySelectorAll('.number-btn').forEach(btn => {
-                    btn.disabled = false;
-                });
-            }
-
-            disableControls() {
-                document.getElementById('startSession').disabled = false;
-                document.getElementById('endSession').disabled = true;
-                document.getElementById('sendBtn').disabled = true;
-                document.getElementById('cancelBtn').disabled = true;
-                
-                document.querySelectorAll('.number-btn').forEach(btn => {
-                    btn.disabled = false; // Keep number pad enabled for phone number entry
-                });
-            }
-
-            updateDisplay() {
-                // Update current input displays
-                document.getElementById('currentInput').textContent = this.currentInput || 'None';
-                document.getElementById('displayCurrentInput').textContent = this.currentInput || 'None';
-                
-                // Update session info
-                document.getElementById('displayPhoneNumber').textContent = this.phoneNumber || 'Not set';
-                document.getElementById('displaySessionId').textContent = this.sessionId || 'None';
-                document.getElementById('displaySessionActive').textContent = this.sessionActive ? 'Yes' : 'No';
-            }
-
-            addToHistory(type, message) {
-                const timestamp = new Date().toLocaleTimeString();
-                this.messageHistory.push({ type, message, timestamp });
-                
-                this.updateHistoryDisplay();
-            }
-
-            updateHistoryDisplay() {
-                const historyContainer = document.getElementById('messageHistory');
-                
-                if (this.messageHistory.length === 0) {
-                    historyContainer.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No messages yet</p>';
-                    return;
-                }
-                
-                historyContainer.innerHTML = this.messageHistory
-                    .slice(-10) // Show last 10 messages
-                    .map(msg => `
-                        <div class="history-item ${msg.type}">
-                            <div class="message-time">${msg.timestamp}</div>
-                            <div class="message-content">${msg.message}</div>
-                            <button class="copy-message-btn" onclick="navigator.clipboard.writeText('${msg.message.replace(/'/g, "\\'")}')">📋</button>
-                        </div>
-                    `).join('');
-                
-                // Scroll to bottom
-                historyContainer.scrollTop = historyContainer.scrollHeight;
-            }
-
-            clearHistory() {
-                this.messageHistory = [];
-                this.updateHistoryDisplay();
-            }
-
-            showError(message) {
-                const screen = document.getElementById('ussdScreen');
-                screen.innerHTML = `<div class="welcome-message"><p>❌ Error</p><p>${message}</p></div>`;
+            
+            delay(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
             }
         }
-
-        // Initialize simulator when page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            window.ussdSimulator = new USSDSimulator();
-        });
+        
+        document.addEventListener('DOMContentLoaded', () => new USSDSimulator());
     </script>
 </body>
 </html>
