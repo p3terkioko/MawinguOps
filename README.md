@@ -5,104 +5,85 @@
 MawinguOps is an AI-powered farming advisory system that provides real-time planting recommendations to smallholder farmers in Machakos County, Kenya through SMS, USSD, and web interfaces.
 
 ```mermaid
-graph TB
+graph TD
     %% External Users
-    Farmers[👨‍🌾 Farmers<br/>SMS & USSD Users]
-    WebUsers[💻 Web Users<br/>Browser Interface]
+    Farmers[Farmers - SMS and USSD Users]
+    WebUsers[Web Users - Browser Interface]
     
     %% External Services
-    OpenMeteo[🌤️ Open-Meteo API<br/>Weather Data Service]
-    HttpSMS[📱 HttpSMS.com<br/>SMS Gateway]
-    ATalking[📞 Africa's Talking<br/>USSD Gateway]
+    OpenMeteo[Open-Meteo API - Weather Data Service]
+    HttpSMS[HttpSMS.com - SMS Gateway]
+    ATalking[Africas Talking - USSD Gateway]
     
     %% Google Cloud Platform
-    subgraph GCP["☁️ Google Cloud Platform - us-central1"]
-        CloudRun[🚀 Google Cloud Run<br/>MawinguOps Server<br/>Node.js Express<br/>Port 8080, 512MB RAM]
+    subgraph GCP[Google Cloud Platform]
+        CloudRun[Google Cloud Run - MawinguOps Server]
         
-        subgraph Storage["💾 Application Storage"]
-            SQLite[(🗄️ SQLite Database<br/>- farmers<br/>- advisory_requests<br/>- sms_logs<br/>- weather_cache)]
-            MLModel[🤖 ML Model<br/>maize_planting_model.pkl<br/>Python Scikit-learn]
+        subgraph Storage[Application Storage]
+            SQLite[SQLite Database]
+            MLModel[ML Model - maize planting model]
         end
     end
     
     %% Application Architecture
-    subgraph AppCore["🏗️ MawinguOps Core Application"]
-        Server[🖥️ Express Server<br/>server.js<br/>API Router & Middleware]
+    subgraph AppCore[MawinguOps Core Application]
+        Server[Express Server - server.js]
         
-        subgraph Services["⚙️ Core Services"]
-            WeatherSvc[🌦️ weatherService.js<br/>• Open-Meteo Integration<br/>• Location Mapping<br/>• Data Processing]
-            
-            AdvisorySvc[🧠 advisoryEngine.js<br/>• Crop Requirements<br/>• Decision Logic<br/>• Message Generation]
-            
-            SMSSvc[📲 smsService.js<br/>• HttpSMS Integration<br/>• Message Routing<br/>• Command Parsing]
-            
-            USSDSvc[📱 ussdService.js<br/>• Africa's Talking USSD<br/>• Menu Navigation<br/>• Session Management]
-            
-            MLSvc[🎯 mlPredictor.js<br/>• Python Integration<br/>• Model Predictions<br/>• Fallback Logic]
-            
-            DBSvc[🗃️ database.js<br/>• SQLite Operations<br/>• Data Persistence<br/>• Query Management]
+        subgraph Services[Core Services]
+            WeatherSvc[weatherService.js]
+            AdvisorySvc[advisoryEngine.js]
+            SMSSvc[smsService.js]
+            USSDSvc[ussdService.js]
+            MLSvc[mlPredictor.js]
+            DBSvc[database.js]
         end
         
-        subgraph Frontend["🎨 Frontend Layer"]
-            StaticFiles[📁 Static Assets<br/>• index.html<br/>• app.js<br/>• styles.css]
-            USSDSim[📱 USSD Simulator<br/>ussd-simulator.html]
+        subgraph Frontend[Frontend Layer]
+            StaticFiles[Static Assets]
+            USSDSim[USSD Simulator]
         end
     end
     
-    %% Data Flows
-    
     %% SMS Flow
-    Farmers -->|SMS: "MAWINGU MAIZE VOTA"| HttpSMS
-    HttpSMS -->|Webhook POST| CloudRun
+    Farmers --> HttpSMS
+    HttpSMS --> CloudRun
     CloudRun --> Server
     Server --> SMSSvc
     SMSSvc --> WeatherSvc
-    WeatherSvc <-->|API Request| OpenMeteo
+    WeatherSvc --> OpenMeteo
     WeatherSvc --> AdvisorySvc
     AdvisorySvc --> MLSvc
-    MLSvc <--> MLModel
-    AdvisorySvc --> Server
-    Server --> DBSvc
-    DBSvc <--> SQLite
-    Server --> SMSSvc
-    SMSSvc -->|Send Response| HttpSMS
-    HttpSMS -->|SMS Delivery| Farmers
+    MLSvc --> MLModel
+    AdvisorySvc --> DBSvc
+    DBSvc --> SQLite
+    SMSSvc --> HttpSMS
+    HttpSMS --> Farmers
     
-    %% USSD Flow
-    Farmers -->|Dial *384*7460#| ATalking
-    ATalking -->|USSD Webhook| CloudRun
-    CloudRun --> USSDSvc
+    %% USSD Flow  
+    Farmers --> ATalking
+    ATalking --> CloudRun
     USSDSvc --> WeatherSvc
     USSDSvc --> AdvisorySvc
-    USSDSvc -->|Menu Response| ATalking
-    ATalking -->|USSD Display| Farmers
+    USSDSvc --> ATalking
     
     %% Web Flow
-    WebUsers -->|HTTPS Request| CloudRun
+    WebUsers --> CloudRun
     CloudRun --> StaticFiles
-    StaticFiles -->|Advisory Request| Server
+    StaticFiles --> Server
     Server --> WeatherSvc
     Server --> AdvisorySvc
-    Server -->|JSON Response| WebUsers
-    
-    %% Development Flow
-    WebUsers -.->|Testing| USSDSim
-    USSDSim -.->|Test API| Server
+    Server --> WebUsers
     
     %% Styling
     classDef external fill:#e1f5fe,stroke:#01579b,stroke-width:2px
     classDef gcp fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
-    classDef app fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
     classDef service fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
     classDef storage fill:#fce4ec,stroke:#c2185b,stroke-width:2px
-    classDef frontend fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
     
     class Farmers,WebUsers,OpenMeteo,HttpSMS,ATalking external
     class GCP,CloudRun gcp
-    class AppCore,Server app
     class WeatherSvc,AdvisorySvc,SMSSvc,USSDSvc,MLSvc,DBSvc service
     class SQLite,MLModel storage
-    class StaticFiles,USSDSim frontend
 ```
 
 ## System Components
@@ -259,5 +240,3 @@ curl -X POST http://localhost:3000/api/ussd/test \
 
 ---
 
-**Built for smallholder farmers in Machakos County, Kenya** 🇰🇪  
-**Empowering agriculture through technology** 🌾💡
