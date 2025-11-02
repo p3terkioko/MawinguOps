@@ -17,7 +17,7 @@ graph TB
     
     %% Google Cloud Platform
     subgraph GCP["☁️ Google Cloud Platform - us-central1"]
-        CloudRun[🚀 Google Cloud Run<br/>MawinguOps Server<br/>Node.js Express<br/>Port 8080 | 512MB RAM]
+        CloudRun[🚀 Google Cloud Run<br/>MawinguOps Server<br/>Node.js Express<br/>Port 8080, 512MB RAM]
         
         subgraph Storage["💾 Application Storage"]
             SQLite[(🗄️ SQLite Database<br/>- farmers<br/>- advisory_requests<br/>- sms_logs<br/>- weather_cache)]
