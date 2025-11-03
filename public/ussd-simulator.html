@@ -241,6 +241,27 @@
             transition: background-color 0.4s ease, box-shadow 0.4s ease;
         }
         }
+        /* Tooltip for Test Live API */
+        .btn[title]:hover::after {
+            content: attr(title);
+            position: absolute;
+            top: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #f97316;
+            color: white;
+            padding: 0.5rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        
+        .btn {
+            position: relative;
+            text-decoration: none;
+        }
     </style>
 </head>
 <body>
@@ -328,7 +349,7 @@
             <h2 class="demo-title">Try the Simulator</h2>
             <p class="demo-subtitle">Test the complete USSD flow or connect to our live API</p>
             <button class="btn" id="startDemo"> Start Interactive Demo</button>
-            <button class="btn secondary" id="testAPI"> Test Live API</button>
+            <a href="https://developers.africastalking.com/simulator" target="_blank" class="btn secondary" title="Africa's Talking Simulator Sandbox"> Test Live API</a>
         </div>
     </div>
     

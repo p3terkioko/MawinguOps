@@ -92,9 +92,18 @@
                     
                     <section class="results-section hidden" id="resultsSection">
                         <!-- Main advisory and reasoning will be populated by JS -->
+                         <!-- Recommendation Badge -->
+                        <div class="recommendation-badge">
+                            <div class="badge-content" id="recommendationBadge">
+                                <span class="badge-icon" id="badgeIcon">🌱</span>
+                                <span class="badge-text" id="badgeText">Loading...</span>
+                            </div>
+                        </div>
                        <div class="advisory-box" id="advisoryBox">
+                         <h3> Your Farming Advisory</h3>
                             <p id="advisoryMainText"></p>
                             <div id="advisoryReasoningContainer" class="hidden">
+        
                                 <strong>WHY NOT TO PLANT:</strong>
                                 <ul id="advisoryReasonsList"></ul>
                             </div>
