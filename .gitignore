@@ -21,3 +21,7 @@ logs/
 .env.production
 .env.test
 .vscode/
+
+# Deployment scripts with sensitive data
+deploy-simple.ps1
+deploy*.ps1
