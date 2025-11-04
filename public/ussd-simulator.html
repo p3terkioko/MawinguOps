@@ -157,6 +157,20 @@
             transition: transform 0.3s ease, filter 0.3s ease;
             filter: drop-shadow(0 10px 20px rgba(0,0,0,0.1));
         }
+
+        /* Background images moved from inline styles to CSS classes */
+        .phone-mockup.ussd {
+            background-image: url('images/iPhone 13 mini - USSD.png');
+        }
+        .phone-mockup.one {
+            background-image: url('images/iPhone 13 mini - 1.png');
+        }
+        .phone-mockup.select-crop {
+            background-image: url('images/iPhone 13 mini - select crop.png');
+        }
+        .phone-mockup.welcome {
+            background-image: url('images/iPhone 13 mini - welcome.png');
+        }
         
         .phone-mockup:hover {
             transform: scale(1.05) translateY(-5px);
@@ -241,11 +255,33 @@
             transition: background-color 0.4s ease, box-shadow 0.4s ease;
         }
         }
+        /* Tooltip for Test Live API */
+        .btn[title]:hover::after {
+            content: attr(title);
+            position: absolute;
+            top: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #f97316;
+            color: white;
+            padding: 0.5rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        
+        .btn {
+            position: relative;
+            text-decoration: none;
+        }
     </style>
 </head>
 <body>
-    <header class="header">
-        <nav class="nav">
+            <div class="step-image">
+                <div class="phone-mockup usd"></div>
+            </div>
             <a href="/" class="back-link">← Back to Home</a>
         </nav>
     </header>
@@ -258,7 +294,7 @@
     <div class="container">
         <div class="step">
             <div class="step-image">
-                <div class="phone-mockup" style="background-image: url('images/iPhone 13 mini - USSD.png');"></div>
+                <div class="phone-mockup ussd"></div>
             </div>
             <div class="step-content">
                 <div class="step-number">1</div>
@@ -271,28 +307,30 @@
                     <li>Available 24/7 across Kenya</li>
                 </ul>
             </div>
-        </div>
-        
-        <div class="step">
+            <div class="step-image">
+                <div class="phone-mockup one"></div>
+            </div>
             <div class="step-content">
                 <div class="step-number">2</div>
                 <h2 class="step-title">Navigate Simple Menu</h2>
-                <p class="step-desc">An intuitive menu system guides farmers through registration and advisory options. The interface is designed for users with basic literacy levels.</p>
+                <p class="step-desc">Users navigate through an intuitive menu system designed for simplicity and accessibility on basic mobile phones.</p>
                 <ul class="step-features">
-                    <li>Simple numbered menu options</li>
                     <li>Clear, concise language</li>
                     <li>Easy navigation with number keys</li>
                     <li>Multilingual support (English & Swahili)</li>
                 </ul>
             </div>
             <div class="step-image">
-                <div class="phone-mockup" style="background-image: url('images/iPhone 13 mini - 1.png');"></div>
+                <div class="phone-mockup select-crop"></div>
+            </div>
+            <div class="step-image">
+                <div class="phone-mockup one"></div>
             </div>
         </div>
         
         <div class="step">
             <div class="step-image">
-                <div class="phone-mockup" style="background-image: url('images/iPhone 13 mini - select crop.png');"></div>
+                <div class="phone-mockup select-crop"></div>
             </div>
             <div class="step-content">
                 <div class="step-number">3</div>
@@ -305,9 +343,9 @@
                     <li>Location-specific recommendations</li>
                 </ul>
             </div>
-        </div>
-        
-        <div class="step">
+            <div class="step-image">
+                <div class="phone-mockup welcome"></div>
+            </div>
             <div class="step-content">
                 <div class="step-number">4</div>
                 <h2 class="step-title">Receive Smart Advisory</h2>
@@ -320,7 +358,7 @@
                 </ul>
             </div>
             <div class="step-image">
-                <div class="phone-mockup" style="background-image: url('images/iPhone 13 mini - welcome.png');"></div>
+                <div class="phone-mockup welcome"></div>
             </div>
         </div>
         
@@ -328,6 +366,7 @@
             <h2 class="demo-title">Try the Simulator</h2>
             <p class="demo-subtitle">Test the complete USSD flow or connect to our live API</p>
             <button class="btn" id="startDemo"> Start Interactive Demo</button>
+            <a href="https://developers.africastalking.com/simulator" target="_blank" rel="noopener noreferrer" class="btn secondary" title="Africa's Talking Simulator Sandbox"> Test Live API</a>
             <button class="btn secondary" id="testAPI"> Test Live API</button>
         </div>
     </div>

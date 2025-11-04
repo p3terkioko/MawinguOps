@@ -3,182 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MawinguOps - Smart Farming Advisory System</title>
-    <meta name="description" content="Get AI-powered farming advisories based on real-time weather data for locations in Machakos County, Kenya.">
-    <meta name="keywords" content="farming, agriculture, weather, advisory, Kenya, Machakos, planting, crops">
-    <meta name="author" content="MawinguOps">
+    <title>MawinguOps - Smart Farming for Maize</title>
+    <meta name="description" content="AI-powered farming advisories for maize, based on real-time weather data for Machakos County, Kenya.">
     
-    <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="MawinguOps - Smart Farming Advisory System">
-    <meta property="og:description" content="Get AI-powered farming advisories based on real-time weather data">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="">
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
-    
-    <!-- Stylesheets -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    
-    <!-- Preload critical resources -->
-    <link rel="preload" href="app.js" as="script">
 </head>
 <body>
-    <!-- Header Section -->
-    <header class="header">
+    <!-- Header and Navigation -->
+    <header class="navbar">
         <div class="container">
-            <div class="header-content">
-                <h1 class="app-title">
-                    <span class="icon">🌾</span>
-                    MawinguOps
-                </h1>
-                <p class="app-tagline">Smart Farming Advisory System</p>
-                <p class="app-subtitle">AI-powered planting recommendations for Machakos County farmers</p>
-            </div>
+            <nav class="nav-content">
+                <a href="/" class="nav-brand"><img src="images/logo-white.png" alt="MawinguOps" style="height: 60px;"></a>
+                <ul class="nav-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="#advisoryForm">Get Advisory</a></li>
+                    <li><a href="ussd-simulator.html" class="button">USSD Simulator</a></li>
+                </ul>
+            </nav>
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="main">
-        <div class="container">
-            
-            <!-- Advisory Form Section -->
-            <section class="advisory-form" id="advisoryForm">
-                <div class="form-card">
-                    <h2 class="form-title">Get Your Planting Advisory</h2>
-                    <p class="form-description">
-                        Select your location and crop to receive personalized farming recommendations based on current weather conditions and AI analysis.
-                    </p>
-                    
+    <main>
+        <!-- Hero Section with Image -->
+        <section class="hero">
+            <div class="container">
+                <div class="hero-grid">
+                    <div class="hero-content">
+                        <h1 class="hero-title">Actionable Maize Farming Advice, Instantly.</h1>
+                        <p class="hero-subtitle">MawinguOps delivers AI-powered planting recommendations for maize farmers in Machakos County using real-time, local weather data.</p>
+                        <a href="#advisoryForm" class="hero-cta">Check Your Farm Today</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="section plan-section">
+            <div class="container">
+                <h2 class="section-title">Our Service</h2>
+                <p class="section-subtitle">Take the most out of our services. Farm better.</p>
+                <div class="plans-grid">
+                    <div class="plan-card">
+                        <h3 class="plan-title">Freemium</h3>
+                        <div class="plan-price">Ksh 0 <span>No payment</span></div>
+                        <a href="#advisoryForm" class="plan-button">GET YOUR FREE ADVISORY</a>
+                        <div class="plan-features-title">Free Package Includes</div>
+                        <ul class="plan-features">
+                            <li>Personalized tips for maize</li>
+                            <li>Real-time weather updates</li>
+                            <li>AI-powered "Plant" or "Wait" alerts</li>
+                        </ul>
+                    </div>
+
+                    <div class="plan-card premium">
+                        <h3 class="plan-title">Premium</h3>
+                        <div class="plan-price">Ksh 100 <span>per month</span></div>
+                        <a href="#" class="plan-button">SUBSCRIBE TO PREMIUM</a>
+                        <div class="plan-features-title">Premium Package Includes</div>
+                        <ul class="plan-features">
+                            <li>Everything in Freemium, plus:</li>
+                            <li>Unlimited weather updates</li>
+                            <li>SMS alerts for critical events</li>
+                            <li>Community WhatsApp groups</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+       <section class="section" id="advisoryForm">
+             <div class="container">
+                <!-- Form Container -->
+                <div class="form-container">
+                    <h2 class="form-title">Get Your Free Planting Advisory</h2>
+                    <p class="form-description">Confirm your location to receive an instant, AI-powered recommendation.</p>
                     <form class="weather-form" id="weatherForm">
-                        <div class="form-group">
-                            <label class="form-label">
-                                📍 Your Location: <strong>Vota</strong>
-                            </label>
-                            <input type="hidden" id="location" name="location" value="Vota">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">
-                                🌱 Your Crop: <strong>Maize</strong>
-                            </label>
-                            <input type="hidden" id="crop" name="crop" value="Maize">
-                        </div>
-                        
-                        <button type="submit" class="submit-btn" id="getAdvisoryBtn">
-                            <span class="btn-text">Get Farming Advisory</span>
-                            <span class="btn-icon">🌱</span>
-                        </button>
+                        <div class="form-group"><label class="form-label">📍 Your Location: <strong>Vota</strong></label><input type="hidden" id="location" value="Vota"></div>
+                        <div class="form-group"><label class="form-label">🌱 Your Crop: <strong>Maize</strong></label><input type="hidden" id="crop" value="Maize"></div>
+                        <button type="submit" class="submit-btn" id="getAdvisoryBtn">Analyze & Advise</button>
                     </form>
                 </div>
-            </section>
-
-            <!-- Loading Section -->
-            <section class="loading-section hidden" id="loadingSection">
-                <div class="loading-card">
-                    <div class="loading-spinner"></div>
-                    <h3 class="loading-title">Analyzing Weather Conditions</h3>
-                    <p class="loading-text">Getting the latest weather data and generating your personalized farming advisory...</p>
-                </div>
-            </section>
-
-            <!-- Error Section -->
-            <section class="error-section hidden" id="errorSection">
-                <div class="error-card">
-                    <div class="error-icon">⚠️</div>
-                    <h3 class="error-title">Something went wrong</h3>
-                    <p class="error-message" id="errorMessage">
-                        Unable to get your advisory right now. Please check your internet connection and try again.
-                    </p>
-                    <button class="retry-btn" id="retryBtn">Try Again</button>
-                </div>
-            </section>
-
-            <!-- Results Section -->
-            <section class="results-section hidden" id="resultsSection">
                 
-                <!-- Recommendation Badge -->
-                <div class="recommendation-badge">
-                    <div class="badge-content" id="recommendationBadge">
-                        <span class="badge-icon" id="badgeIcon">🌱</span>
-                        <span class="badge-text" id="badgeText">Loading...</span>
-                    </div>
-                </div>
-
-                <!-- Advisory Content -->
-                <div class="advisory-content">
+                <div id="functional-results">
+                    <section class="loading-section hidden" id="loadingSection"><div class="loading-card"><div class="loading-spinner"></div><h3>Analyzing Weather...</h3></div></section>
+                    <section class="error-section hidden" id="errorSection"> <!-- Error card will show here --> </section>
                     
-                    <!-- Main Advisory Card -->
-                    <div class="advisory-card">
-                        <h3 class="advisory-title">Your Farming Advisory</h3>
-                        <div class="advisory-message" id="advisoryMessage">
-                            Loading your personalized farming advisory...
-                        </div>
-                        <div class="advisory-reasoning" id="advisoryReasoning">
-                            <h4 class="reasoning-title">Why this recommendation?</h4>
-                            <p class="reasoning-text" id="reasoningText">
-                                Analyzing weather conditions and crop requirements...
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Weather Details Card -->
-                    <div class="weather-details">
-                        <h3 class="details-title">Current Weather Conditions</h3>
-                        <div class="weather-grid" id="weatherGrid">
-                            <!-- Weather items will be populated by JavaScript -->
-                        </div>
-                        
-                        <!-- Weather Warnings -->
-                        <div class="weather-warnings hidden" id="weatherWarnings">
-                            <h4 class="warnings-title">⚠️ Weather Warnings</h4>
-                            <div class="warnings-list" id="warningsList">
-                                <!-- Warnings will be populated by JavaScript -->
+                    <section class="results-section hidden" id="resultsSection">
+                        <!-- Main advisory and reasoning will be populated by JS -->
+                         <!-- Recommendation Badge -->
+                        <div class="recommendation-badge">
+                            <div class="badge-content" id="recommendationBadge">
+                                <span class="badge-icon" id="badgeIcon">🌱</span>
+                                <span class="badge-text" id="badgeText">Loading...</span>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- Forecast Toggle -->
-                    <div class="forecast-toggle">
-                        <button class="toggle-btn" id="forecastToggle">
-                            <span>View 5-Day Forecast</span>
-                            <span class="toggle-icon">▼</span>
-                        </button>
-                    </div>
-
-                    <!-- Detailed Forecast (Hidden by default) -->
-                    <div class="detailed-forecast hidden" id="detailedForecast">
-                        <h3 class="forecast-title">5-Day Weather Forecast</h3>
-                        <div class="forecast-grid" id="forecastGrid">
-                            <!-- Forecast cards will be populated by JavaScript -->
+                       <div class="advisory-box" id="advisoryBox">
+                         <h3> Your Farming Advisory</h3>
+                            <p id="advisoryMainText"></p>
+                            <div id="advisoryReasoningContainer" class="hidden">
+        
+                                <strong>WHY NOT TO PLANT:</strong>
+                                <ul id="advisoryReasonsList"></ul>
+                            </div>
+                            <div id="advisoryActionContainer" class="hidden">
+                                <strong>ACTION:</strong>
+                                <span id="advisoryActionText"></span>
+                            </div>
                         </div>
-                    </div>
 
+                        <!-- Weather Details Card -->
+                        <div class="weather-details">
+                            <h3 class="results-title">Current Weather Conditions</h3>
+                            <div class="weather-grid" id="weatherGrid">
+                                <!-- Weather items will be populated by JavaScript -->
+                            </div>
+                            <div id="weatherWarnings">
+                                <h4 class="warnings-title">Weather Warnings</h4>
+                                <div id="warningsList">
+                                    <!-- Warnings will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Forecast Toggle Button -->
+                        <div class="forecast-toggle">
+                            <button class="toggle-btn" id="forecastToggle">
+                                <span>View 5-Day Forecast</span>
+                                <span class="toggle-icon">▼</span>
+                            </button>
+                        </div>
+
+                        <!-- Detailed Forecast (Hidden by default) -->
+                        <div class="detailed-forecast hidden" id="detailedForecast">
+                            <h3 class="results-title">5-Day Weather Forecast</h3>
+                            <div class="forecast-grid" id="forecastGrid">
+                                <!-- Forecast cards will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </section>
                 </div>
-            </section>
+             </div>
+        </section>
 
-
-
-        </div>
     </main>
 
-    <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <div class="footer-content">
-                <div class="footer-info">
-                    <p class="footer-text">© 2024 MawinguOps - Smart Farming Advisory System</p>
-                    <p class="footer-subtitle">Empowering farmers with AI-driven weather insights</p>
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>Contact Us</h4>
+                    <p>+254 712 345 678</p>
+                    <p>info@mawinguops.co.ke</p>
+                    <div class="footer-socials">
+                        <a href="#">X</a>
+                        <a href="#">FB</a>
+                        <a href="#">IG</a>
+                    </div>
                 </div>
-                <div class="footer-links">
-                    <a href="/api/health" class="footer-link">API Status</a>
-                    <a href="#" class="footer-link">About</a>
+                <div class="footer-col">
+                    <h4>Explore</h4>
+                    <a href="#advisoryForm">Get Advisory</a>
+                    <a href="ussd-simulator.html">USSD Simulator</a>
+                    <a href="#team">Our Team</a>
                 </div>
+                <div class="footer-col">
+                    <h4>Join Us</h4>
+                    <p>Start benefiting from our experts. Get your free advice today.</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2025 MawinguOps</p>
             </div>
         </div>
     </footer>
 
-    <!-- JavaScript -->
     <script src="app.js"></script>
+</body>
+</html>
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            const logo = document.querySelector('.nav-brand img');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+                logo.src = 'images/logo.png';
+            } else {
+                navbar.classList.remove('scrolled');
+                logo.src = 'images/logo-white.png';
+            }
+        });
+    </script>
 </body>
 </html>

@@ -246,11 +246,18 @@ app.get('/api/advisory', async (req, res) => {
         const weatherData = await weatherService.getWeather(location);
         
         // Generate advisory with Gemini enhancement
-        console.log(`[API] Generating enhanced advisory for ${crop} in ${location}`);
-        const advisory = await advisoryEngine.generateEnhancedAdvisory(weatherData, crop, location);
-        const enhanced = advisory.isEnhanced || false;
+        let advisory;
+        let enhanced = false;
         
-        console.log(`[API] Advisory generated - Enhanced: ${enhanced}`);
+        try {
+            console.log('[API] Generating Gemini-enhanced advisory for', location, crop);
+            advisory = await advisoryEngine.generateEnhancedAdvisory(weatherData, crop, location);
+            enhanced = advisory.enhanced || false;
+        } catch (error) {
+            console.warn('[API] Gemini enhancement failed, using basic advisory:', error.message);
+            advisory = advisoryEngine.generateAdvisory(weatherData, crop, location);
+            enhanced = false;
+        }
         
         // Save advisory to database (for any registered farmer or general tracking)
         const saveResult = await database.saveAdvisory(
@@ -258,13 +265,13 @@ app.get('/api/advisory', async (req, res) => {
             location,
             crop,
             advisory.recommendation || advisory.advisory,
-            enhanced ? advisory.enhancedMessage : (advisory.recommendation || advisory.advisory),
+            advisory.recommendation || advisory.advisory,
             {
                 weatherSummary: advisory.details || advisory.weather,
                 forecast: advisory.forecast,
+                enhancedMessage: advisory.enhancedMessage,
                 generatedAt: advisory.timestamp || advisory.generatedAt,
-                enhanced: enhanced,
-                geminiUsed: enhanced
+                geminiEnhanced: enhanced
             }
         );
         
@@ -1546,6 +1553,11 @@ app.use((err, req, res, next) => {
         message: 'An unexpected error occurred',
         details: process.env.NODE_ENV === 'development' ? err.message : undefined
     });
+});
+
+// USSD Simulator route - redirect /ussd to /ussd-simulator.html
+app.get('/ussd', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'ussd-simulator.html'));
 });
 
 // Handle 404 for API routes
