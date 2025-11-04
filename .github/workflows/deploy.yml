@@ -1,0 +1,96 @@
+name: Deploy to Google Cloud Run
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  SERVICE_NAME: mawinguops
+  REGION: us-central1
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run tests (if any)
+      run: npm test --if-present
+
+    - name: Lint code
+      run: npm run lint --if-present
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Authenticate to Google Cloud
+      id: auth
+      uses: google-github-actions/auth@v2
+      with:
+        credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v2
+
+    - name: Configure Docker to use gcloud as a credential helper
+      run: gcloud auth configure-docker
+
+    - name: Build Docker image
+      run: |
+        docker build -t gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA .
+        docker build -t gcr.io/$PROJECT_ID/$SERVICE_NAME:latest .
+
+    - name: Push Docker image
+      run: |
+        docker push gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA
+        docker push gcr.io/$PROJECT_ID/$SERVICE_NAME:latest
+
+    - name: Deploy to Cloud Run
+      run: |
+        gcloud run deploy $SERVICE_NAME \
+          --image gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA \
+          --platform managed \
+          --region $REGION \
+          --allow-unauthenticated \
+          --port 3000 \
+          --memory 512Mi \
+          --cpu 1 \
+          --cpu-throttling \
+          --concurrency 40 \
+          --min-instances 0 \
+          --max-instances 5 \
+          --set-env-vars "NODE_ENV=production,HTTPSMS_API_KEY=${{ secrets.HTTPSMS_API_KEY }},HTTPSMS_PHONE_NUMBER=${{ secrets.HTTPSMS_PHONE_NUMBER }},GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }},AT_API_KEY=${{ secrets.AT_API_KEY }},AT_USERNAME=${{ secrets.AT_USERNAME }},AT_SHORTCODE=${{ secrets.AT_SHORTCODE }}" \
+          --quiet
+
+    - name: Get service URL
+      id: url
+      run: |
+        SERVICE_URL=$(gcloud run services describe $SERVICE_NAME --platform managed --region $REGION --format "value(status.url)")
+        echo "SERVICE_URL=$SERVICE_URL" >> $GITHUB_OUTPUT
+        echo "🚀 Deployed to: $SERVICE_URL"
+
+    - name: Update deployment status
+      run: |
+        echo "✅ Deployment successful!"
+        echo "📱 Service URL: ${{ steps.url.outputs.SERVICE_URL }}"
+        echo "🔗 Configure HttpSMS webhook: ${{ steps.url.outputs.SERVICE_URL }}/api/sms/webhook"

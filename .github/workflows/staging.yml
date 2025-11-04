@@ -1,0 +1,50 @@
+name: Deploy to Staging
+
+on:
+  push:
+    branches: [ develop, staging ]
+
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  SERVICE_NAME: mawingu-ops-staging
+  REGION: us-central1
+
+jobs:
+  deploy-staging:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v2
+      with:
+        credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v2
+
+    - name: Configure Docker to use gcloud as a credential helper
+      run: gcloud auth configure-docker
+
+    - name: Build and Deploy to Staging
+      run: |
+        gcloud run deploy $SERVICE_NAME \
+          --source . \
+          --platform managed \
+          --region $REGION \
+          --allow-unauthenticated \
+          --port 8080 \
+          --memory 512Mi \
+          --cpu 1 \
+          --concurrency 40 \
+          --min-instances 0 \
+          --max-instances 3 \
+          --set-env-vars "NODE_ENV=staging,httpsmsapikey=${{ secrets.HTTPSMS_API_KEY_STAGING }},httpsmsphonenumber=${{ secrets.HTTPSMS_PHONE_NUMBER }},gemini=${{ secrets.GEMINI_API_KEY }}" \
+          --quiet
+
+    - name: Get staging URL
+      run: |
+        STAGING_URL=$(gcloud run services describe $SERVICE_NAME --platform managed --region $REGION --format "value(status.url)")
+        echo "🧪 Staging deployed to: $STAGING_URL"
