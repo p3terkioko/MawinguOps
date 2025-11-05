@@ -100,30 +100,26 @@ class GeminiAdvisoryService {
         
         console.log('[GeminiAI] Weather data extraction:', { totalRainfall, avgTemperature, avgRainProbability });
         
-        return `You are a friendly agricultural advisor helping a farmer in Kenya. Write a SHORT, simple advisory message.
+        return `You are a friendly agricultural advisor helping a farmer in Kenya.
 
-CONTEXT:
-- Farmer wants to plant ${crop} in ${location}, Machakos County
-- Current recommendation: ${recommendation}
-- Weather forecast: ${totalRainfall.toFixed(1)}mm rain expected over 5 days, ${avgTemperature.toFixed(1)}°C average temperature, ${avgRainProbability.toFixed(0)}% rain probability
+REAL WEATHER DATA FOR THIS ADVISORY:
+- Rainfall expected: ${totalRainfall.toFixed(1)}mm over 5 days
+- Average temperature: ${avgTemperature.toFixed(1)}°C  
+- Rain probability: ${avgRainProbability.toFixed(0)}%
+- Crop: ${crop}
+- Location: ${location}, Machakos County
+- Recommendation: ${recommendation}
 
-EXACT FORMAT REQUIRED:
-🌾 Habari mkulima!
+WRITE A SHORT ADVISORY MESSAGE (max 80 words) that:
+1. Starts with "Jambo mkulima!" or similar greeting
+2. States the recommendation clearly (GOOD to plant / WAIT / NOT GOOD to plant)
+3. MUST USE these EXACT numbers: ${totalRainfall.toFixed(0)}mm rainfall, ${avgTemperature.toFixed(0)}°C temperature, ${avgRainProbability.toFixed(0)}% rain chance
+4. Explains why this recommendation is good or bad for the farmer
+5. Ends with a simple action step
 
-Based on the weather forecast for your area, this is a [RECOMMENDATION] for your ${crop.toLowerCase()}! The conditions look [promising/challenging] for the next few days.
+Be friendly, honest, and use simple language. No technical jargon.
 
-Why now is [good/not ideal]:
-The weather shows ${totalRainfall.toFixed(0)}mm of rain expected over the next 5 days with temperatures around ${avgTemperature.toFixed(0)}°C - [explain if this is good or bad for the crop in simple terms]. There's a ${avgRainProbability.toFixed(0)}% chance of rain, which means [simple explanation].
-
-IMPORTANT RULES:
-- Keep it SHORT - maximum 100 words total
-- Start with exactly "🌾 Habari mkulima!"
-- Use simple language farmers understand
-- Replace [RECOMMENDATION] with "GOOD TIME to plant" or "better to WAIT" or "NOT GOOD to plant"
-- Be encouraging but honest
-- No technical jargon
-
-Write the message now:`;
+Write the advisory now:`;
     }
     
     /**
