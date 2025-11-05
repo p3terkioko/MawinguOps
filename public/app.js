@@ -235,10 +235,16 @@ class MawinguOpsApp {
         try {
             console.log(`[App] Requesting advisory for ${crop} in ${location}`);
             
-            const response = await fetch(`${this.baseURL}/api/advisory`, {
+            // Add cache-busting timestamp
+            const timestamp = new Date().getTime();
+            
+            const response = await fetch(`${this.baseURL}/api/advisory?t=${timestamp}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache',
+                    'Expires': '0'
                 },
                 body: JSON.stringify({
                     location: location,
@@ -252,21 +258,13 @@ class MawinguOpsApp {
                 throw new Error(data.message || data.details || 'Failed to get advisory');
             }
             
-            console.log("[App] Advisory received:", data);
+            console.log("[App] Fresh advisory received (timestamp: " + timestamp + "):", data);
+            console.log("[App] Recommendation:", data.advisory.recommendation);
+            console.log("[App] Advisory message length:", data.advisory.advisory.length);
+            console.log("[App] First 200 chars:", data.advisory.advisory.substring(0, 200));
             
             // Store the advisory data
             this.currentAdvisory = data.advisory;
-            
-            console.log("[App] Displaying advisory results");
-            console.log("[App] Full advisory data:", this.currentAdvisory);
-            console.log("[App] Recommendation:", this.currentAdvisory.recommendation);
-            console.log("[App] Advisory message:", this.currentAdvisory.advisory);
-            
-            // Debug: Check for frontend mismatch
-            if ((this.currentAdvisory.recommendation === 'PLANT NOW' && (this.currentAdvisory.advisory.includes('WAIT') || this.currentAdvisory.advisory.includes('⏳'))) ||
-                (this.currentAdvisory.recommendation === 'WAIT 2-3 DAYS' && (this.currentAdvisory.advisory.includes('PLANT NOW') || this.currentAdvisory.advisory.includes('🌱')))) {
-                console.error(`[App] FRONTEND DETECTED MISMATCH! Badge: ${this.currentAdvisory.recommendation}, Message contains: ${this.currentAdvisory.advisory.substring(0, 100)}...`);
-            }
             
             // Display the results
             this.displayAdvisory(data);
@@ -371,9 +369,16 @@ class MawinguOpsApp {
         const reasoningElement = document.getElementById('reasoningText');
         
         if (messageElement) {
+            // Clear element first
+            messageElement.textContent = '';
+            
             // Prioritize enhanced message from Gemini AI
             const message = advisory.enhancedMessage || advisory.advisory || advisory.message || 'No advisory message available.';
             messageElement.textContent = message;
+            
+            // Force repaint
+            messageElement.style.opacity = '0.9';
+            messageElement.style.opacity = '1';
             
             // Log which message type is being displayed
             if (advisory.enhancedMessage) {
@@ -387,6 +392,7 @@ class MawinguOpsApp {
         }
         
         if (reasoningElement && advisory.reasoning) {
+            reasoningElement.textContent = '';
             reasoningElement.textContent = advisory.reasoning;
         }
     }

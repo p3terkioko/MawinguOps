@@ -39,17 +39,18 @@ class GeminiAdvisoryService {
      * Generate farming advisory using Gemini AI
      * @param {string} crop - Crop type (Maize, Beans, Sorghum)
      * @param {string} location - Location name
-     * @param {Object} weatherData - Current weather conditions
+     * @param {Object} weatherData - Current weather conditions with dailyForecasts
      * @param {string} recommendation - Base recommendation (PLANT NOW, WAIT, DO NOT PLANT YET)
+     * @param {Object} calculatedWeather - Pre-calculated weather summary (optional)
      * @returns {Promise<string>} Generated advisory message
      */
-    async generateAdvisory(crop, location, weatherData, recommendation) {
+    async generateAdvisory(crop, location, weatherData, recommendation, calculatedWeather = null) {
         if (!this.isConfigured) {
             throw new Error('Gemini AI service not properly configured');
         }
         
         try {
-            const prompt = this.buildAdvisoryPrompt(crop, location, weatherData, recommendation);
+            const prompt = this.buildAdvisoryPrompt(crop, location, weatherData, recommendation, calculatedWeather);
             
             const result = await this.model.generateContent(prompt);
             const response = await result.response;
@@ -68,18 +69,36 @@ class GeminiAdvisoryService {
      * Build comprehensive prompt for Gemini AI
      * @param {string} crop - Crop type
      * @param {string} location - Location name
-     * @param {Object} weatherData - Weather conditions
+     * @param {Object} weatherData - Weather conditions with dailyForecasts array
      * @param {string} recommendation - Base recommendation
+     * @param {Object} calculatedWeather - Pre-calculated summary (optional)
      * @returns {string} Formatted prompt
      */
-    buildAdvisoryPrompt(crop, location, weatherData, recommendation) {
-        // Safely extract weather data from the correct structure
-        const totalRainfall = weatherData?.summary?.totalRainfall ?? weatherData?.totalRainfall ?? 0;
-        const avgTemperature = weatherData?.summary?.avgTemperature ?? weatherData?.avgTemperature ?? 20;
-        const avgRainProbability = weatherData?.summary?.avgRainProbability ?? weatherData?.avgRainProbability ?? 0;
+    buildAdvisoryPrompt(crop, location, weatherData, recommendation, calculatedWeather = null) {
+        // Calculate weather summary from dailyForecasts if not provided
+        let totalRainfall, avgTemperature, avgRainProbability;
+        
+        if (calculatedWeather) {
+            // Use pre-calculated values if provided
+            totalRainfall = calculatedWeather.totalRainfall;
+            avgTemperature = calculatedWeather.avgTemperature;
+            avgRainProbability = calculatedWeather.avgRainProbability;
+        } else {
+            // Extract from dailyForecasts array (correct structure)
+            if (weatherData?.dailyForecasts && weatherData.dailyForecasts.length > 0) {
+                const next5Days = weatherData.dailyForecasts.slice(0, 5);
+                totalRainfall = next5Days.reduce((sum, day) => sum + day.totalRainfall, 0);
+                avgTemperature = next5Days.reduce((sum, day) => sum + day.avgTemperature, 0) / next5Days.length;
+                avgRainProbability = next5Days.reduce((sum, day) => sum + day.rainProbability, 0) / next5Days.length;
+            } else {
+                // Fallback for old structure or missing data
+                totalRainfall = weatherData?.summary?.totalRainfall ?? weatherData?.totalRainfall ?? 0;
+                avgTemperature = weatherData?.summary?.avgTemperature ?? weatherData?.avgTemperature ?? 20;
+                avgRainProbability = weatherData?.summary?.avgRainProbability ?? weatherData?.avgRainProbability ?? 0;
+            }
+        }
         
         console.log('[GeminiAI] Weather data extraction:', { totalRainfall, avgTemperature, avgRainProbability });
-        console.log('[GeminiAI] Raw weather summary:', weatherData?.summary);
         
         return `You are a friendly agricultural advisor helping a farmer in Kenya. Write a SHORT, simple advisory message.
 

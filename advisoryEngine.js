@@ -522,13 +522,24 @@ async function generateEnhancedAdvisory(weatherData, crop, location) {
             };
         }
 
-        // Generate enhanced message with Gemini
+        // Calculate weather summary for Gemini to ensure consistency
+        const next5Days = weatherData.dailyForecasts.slice(0, 5);
+        const calculatedWeather = {
+            totalRainfall: next5Days.reduce((sum, day) => sum + day.totalRainfall, 0),
+            avgTemperature: next5Days.reduce((sum, day) => sum + day.avgTemperature, 0) / next5Days.length,
+            avgRainProbability: next5Days.reduce((sum, day) => sum + day.rainProbability, 0) / next5Days.length
+        };
+        
+        console.log('[Advisory] Calculated weather for Gemini:', calculatedWeather);
+
+        // Generate enhanced message with Gemini, passing both the raw weather data and calculated summary
         console.log('[Advisory] Generating enhanced message with Gemini AI...');
         const enhancedMessage = await geminiService.generateAdvisory(
             crop, 
             location, 
-            weatherData, 
-            basicAdvisory.recommendation
+            weatherData,  // Pass full weather data with dailyForecasts
+            basicAdvisory.recommendation,
+            calculatedWeather  // Also pass the calculated summary for consistency
         );
 
         return {

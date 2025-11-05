@@ -34,15 +34,20 @@ async function fetchWeatherData(location) {
             longitude: coords.lon,
             hourly: 'temperature_2m,precipitation,precipitation_probability',
             forecast_days: 7,
-            timezone: 'Africa/Nairobi'
+            timezone: 'Africa/Nairobi',
+            // Add cache-busting parameter
+            t: new Date().getTime()
         };
         
-        // Make API request
+        // Make API request with cache headers
         const response = await axios.get(API_BASE_URL, {
             params: params,
             timeout: REQUEST_TIMEOUT,
             headers: {
-                'User-Agent': 'MawinguOps/1.0.0'
+                'User-Agent': 'MawinguOps/1.0.0',
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache',
+                'Expires': '0'
             }
         });
         
@@ -51,7 +56,8 @@ async function fetchWeatherData(location) {
             throw new Error('Invalid API response format');
         }
         
-        console.log(`[Weather] Successfully fetched data for ${location} (${coords.lat}, ${coords.lon})`);
+        console.log(`[Weather] Successfully fetched FRESH data for ${location} (${coords.lat}, ${coords.lon})`);
+        console.log(`[Weather] Data timestamp: ${new Date().toISOString()}`);
         return response.data;
         
     } catch (error) {
